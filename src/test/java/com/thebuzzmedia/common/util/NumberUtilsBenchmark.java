@@ -5,6 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/**
+ * <strong>NOTE</strong>: This isn't a totally fair benchmark comparison as
+ * using Integer.parseInt requires that the incoming byte-stream be run through
+ * a character-conversion process and then all the values turned into String
+ * instances before the numbers can ever be parsed from it.
+ * 
+ * The memory and performance overhead of the NumberUtils class is an order of
+ * magnitude less than the JDK's Integer.parseInt method.
+ */
 public class NumberUtilsBenchmark {
 	public static final int ITERS = 20;
 
