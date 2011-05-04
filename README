@@ -1,1 +1,89 @@
-More detailed description coming soon...
+The Buzz Media common-lib
+http://www.thebuzzmedia.com/software/common-lib-common-java-utility-library/
+
+
+Changelog
+---------
+
+1.0
+	* Initial public release.
+
+
+License
+-------
+This library is released under the Apache 2 License. See LICENSE.
+
+
+Description
+-----------
+A collection of hand-tuned, ultra-fast classes used by most of the open source
+and commercial software from The Buzz Media.
+
+Many of the operations performed by this library (like searching an array for
+a byte or char, or parsing a non-float number) are performed by other libraries
+readily available from projects like Apache Commons; this functionality is
+re-implemented in this library with a tight focus on performance and lower 
+memory overhead at the expense of code duplication.
+
+What that means is avoiding extremely deep method call-hierarchies for something
+like indexOf(char[], char) calling down into a more specific method, then
+another and another and another until finally ending up at some Abstract class
+base implementation.
+
+Benchmarks are provided to compare the library's performance to that of more
+"standard" methods.
+
+
+Performance
+-----------
+Benchmarks can be found in the /src/test/java folder and can be run directly
+from the command line (no need to setup JUnit).
+
+[Platform]
+* Java 1.6.0_24 on Windows 7 64-bit 
+* Dual Core Intel E6850 processor
+* 8 GB of ram
+
+[Benchmark Results]
+indexOf byte		elapsed time: 12ms	(3,328,000 bytes scanned)
+indexOf byte[]		elapsed time: 22ms	(3,328,000 bytes scanned)
+indexOfAny byte[]	elapsed time: 23ms	(3,328,000 bytes scanned)
+
+JDK Integer.parseInt 			elapsed time: 72ms	(1310720 numbers parsed, 6553600 bytes processed)
+common-lib NumberUtils.parseInt elapsed time: 55ms	(1310720 numbers parsed, 9175000 bytes processed)
+
+
+** A note about the Integer.parseInt comparison; the time required to read in the
+sample file, decode it from byte[] to char[] and then convert those all into
+String instances IS NOT INCLUDED in the benchmark timing. If you were to include
+that, you would see both the  memory usage and CPU time of using 
+Integer.parseInt to be significantly higher than NumberUtils.parseInt.
+
+
+Runtime Requirements
+--------------------
+None.
+
+There are currently no 3rd party dependencies required to use common-lib.
+
+
+History
+-------
+While working on a few disparate projects (high performance XML parser,
+Redis DB driver, CloudFront log parser, etc.) I noticed a pattern in the types
+of utilities I was writing over and over again OR logic I was inlining directly
+in my code.
+
+I generalized this code and broke it out into this library so the handful of
+projects maintained by The Buzz Media could more easily make use of the code.
+
+I decided to open source the project because there is no proprietary magic in
+any of this, the library is tuned to be fast with a small memory footprint and
+I thought others might find it handy as opposed to using more bloated libs like
+Apache Commons.
+
+
+Contact
+-------
+If you have questions, comments or bug reports for this software please contact
+us at: software@thebuzzmedia.com
