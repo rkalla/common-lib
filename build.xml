@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<project name="common-lib" default="dist">
+<project name="tbm-common-lib" default="dist">
 	<property name="dir.src" value="src/main/java" />
 	<property name="dir.bin" value="bin" />
 	<property name="dir.dist" value="dist" />
@@ -22,7 +22,7 @@ limitations under the License.
 	<property name="version.major" value="1" />
 	<property name="version.minor" value="0" />
 
-	<property name="name.file" value="common-lib" />
+	<property name="name.file" value="tbm-common-lib" />
 	<property name="name.file.javadoc" value="${name.file}-${version.major}.${version.minor}-javadoc.jar" />
 	<property name="name.file.src" value="${name.file}-${version.major}.${version.minor}-sources.jar" />
 

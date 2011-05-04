@@ -16,7 +16,7 @@ This library is released under the Apache 2 License. See LICENSE.
 
 Description
 -----------
-A collection of hand-tuned, ultra-fast classes used by most of the open source
+A collection of hand-tuned, low-overhead classes used by most of the open source
 and commercial software from The Buzz Media.
 
 Many of the operations performed by this library (like searching an array for
