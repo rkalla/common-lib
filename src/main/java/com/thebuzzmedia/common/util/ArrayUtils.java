@@ -21,6 +21,66 @@ public class ArrayUtils {
 
 	/*
 	 * ========================================================================
+	 * ########################################################################
+	 * 
+	 * 
+	 * 
+	 * BYTE-bsaed methods
+	 * 
+	 * 
+	 * 
+	 * ########################################################################
+	 * ========================================================================
+	 */
+
+	public static boolean equals(byte[] arrayA, byte[] arrayB) {
+		// Short-circuit in simple cases.
+		if ((arrayA == arrayB) || (arrayA == null && arrayB == null))
+			return true;
+		else if ((arrayA == null && arrayB != null)
+				|| (arrayA != null && arrayB == null))
+			return false;
+		else if (arrayA.length != arrayB.length)
+			return false;
+
+		return equals(0, arrayA, 0, arrayB, arrayB.length);
+	}
+
+	public static boolean equals(int indexA, byte[] arrayA, int indexB,
+			byte[] arrayB, int length) throws IllegalArgumentException {
+		// Short-circuit in simple cases.
+		if (arrayA == arrayB)
+			return true;
+		else if ((arrayA == null && arrayB != null)
+				|| (arrayA != null && arrayB == null))
+			return false;
+
+		/*
+		 * Check all the arguments. Seems lengthy, but it's fast and allows the
+		 * code below it to be simpler. We have to do these sanity checks at
+		 * SOME regardless.
+		 */
+		if (indexA < 0 || indexB < 0 || length < 0
+				|| (indexA + length) > arrayA.length
+				|| (indexB + length) > arrayB.length)
+			throw new IllegalArgumentException("indexA [" + indexA
+					+ "] and indexB [" + indexB + "] must be >= 0. length ["
+					+ length + "] must be >= 0. (indexA + length) ["
+					+ (indexA + length) + "] must be <= arrayA.length ["
+					+ arrayA.length + "]. (indexB + length) ["
+					+ (indexB + length) + "]  must be <= arrayB.length ["
+					+ arrayB.length + "].");
+
+		for (int i = 0; i < length; i++) {
+			if (arrayA[indexA + i] != arrayB[indexB + i])
+				return false;
+		}
+
+		return true;
+	}
+
+	/*
+	 * ========================================================================
 	 * byte[] array, byte value
 	 * ========================================================================
 	 */
@@ -302,6 +362,65 @@ public class ArrayUtils {
 		}
 
 		return INVALID_INDEX;
+	}
+
+	/*
+	 * ========================================================================
+	 * ########################################################################
+	 * 
+	 * 
+	 * 
+	 * CHAR-bsaed methods
+	 * 
+	 * 
+	 * 
+	 * ########################################################################
+	 * ========================================================================
+	 */
+	public static boolean equals(char[] arrayA, char[] arrayB) {
+		// Short-circuit in simple cases.
+		if ((arrayA == arrayB) || (arrayA == null && arrayB == null))
+			return true;
+		else if ((arrayA == null && arrayB != null)
+				|| (arrayA != null && arrayB == null))
+			return false;
+		else if (arrayA.length != arrayB.length)
+			return false;
+
+		return equals(0, arrayA, 0, arrayB, arrayB.length);
+	}
+
+	public static boolean equals(int indexA, char[] arrayA, int indexB,
+			char[] arrayB, int length) throws IllegalArgumentException {
+		// Short-circuit in simple cases.
+		if (arrayA == arrayB)
+			return true;
+		else if ((arrayA == null && arrayB != null)
+				|| (arrayA != null && arrayB == null))
+			return false;
+
+		/*
+		 * Check all the arguments. Seems lengthy, but it's fast and allows the
+		 * code below it to be simpler. We have to do these sanity checks at
+		 * SOME regardless.
+		 */
+		if (indexA < 0 || indexB < 0 || length < 0
+				|| (indexA + length) > arrayA.length
+				|| (indexB + length) > arrayB.length)
+			throw new IllegalArgumentException("indexA [" + indexA
+					+ "] and indexB [" + indexB + "] must be >= 0. length ["
+					+ length + "] must be >= 0. (indexA + length) ["
+					+ (indexA + length) + "] must be <= arrayA.length ["
+					+ arrayA.length + "]. (indexB + length) ["
+					+ (indexB + length) + "]  must be <= arrayB.length ["
+					+ arrayB.length + "].");
+
+		for (int i = 0; i < length; i++) {
+			if (arrayA[indexA + i] != arrayB[indexB + i])
+				return false;
+		}
+
+		return true;
 	}
 
 	/*

@@ -47,6 +47,33 @@ public class ArrayUtilsTest {
 	 * ========================================================================
 	 */
 	@Test
+	public void testEqualsBaBa() {
+		assertFalse(ArrayUtils.equals((byte[]) null, BARRAY));
+		assertFalse(ArrayUtils.equals(BARRAY, (byte[]) null));
+		assertFalse(ArrayUtils.equals(BVALUES_POS, BARRAY));
+
+		assertTrue(ArrayUtils.equals((byte[]) null, (byte[]) null));
+		assertTrue(ArrayUtils.equals(BARRAY, BARRAY));
+
+		byte[] copy = new byte[BARRAY.length];
+		System.arraycopy(BARRAY, 0, copy, 0, BARRAY.length);
+
+		assertTrue(ArrayUtils.equals(BARRAY, copy));
+	}
+
+	@Test
+	public void testEqualsIBaIBaI() {
+		assertFalse(ArrayUtils.equals(0, BARRAY, 0, null, BARRAY.length));
+		assertFalse(ArrayUtils.equals(0, null, 0, BARRAY, BARRAY.length));
+
+		assertTrue(ArrayUtils.equals(0, BARRAY, 0, BARRAY, BARRAY.length));
+		assertTrue(ArrayUtils.equals(0, BARRAY, 0, BVALUES_NEG,
+				BVALUES_NEG.length));
+		assertTrue(ArrayUtils.equals(BVALUES_NEG.length + 1, BARRAY, 0,
+				BVALUES_POS, BVALUES_POS.length));
+	}
+
+	@Test
 	public void testIndexOfBaB() {
 		try {
 			ArrayUtils.indexOf(null, (byte) 0);
@@ -626,6 +653,33 @@ public class ArrayUtilsTest {
 	/* ############################################################## */
 	/* ############################################################## */
 	/* ############################################################## */
+
+	@Test
+	public void testEqualsCaCa() {
+		assertFalse(ArrayUtils.equals((char[]) null, CARRAY));
+		assertFalse(ArrayUtils.equals(CARRAY, (char[]) null));
+		assertFalse(ArrayUtils.equals(CVALUES_POS, CARRAY));
+
+		assertTrue(ArrayUtils.equals((char[]) null, (char[]) null));
+		assertTrue(ArrayUtils.equals(CARRAY, CARRAY));
+
+		char[] copy = new char[CARRAY.length];
+		System.arraycopy(CARRAY, 0, copy, 0, CARRAY.length);
+
+		assertTrue(ArrayUtils.equals(CARRAY, copy));
+	}
+
+	@Test
+	public void testEqualsICaICaI() {
+		assertFalse(ArrayUtils.equals(0, CARRAY, 0, null, CARRAY.length));
+		assertFalse(ArrayUtils.equals(0, null, 0, CARRAY, CARRAY.length));
+
+		assertTrue(ArrayUtils.equals(0, CARRAY, 0, CARRAY, CARRAY.length));
+		assertTrue(ArrayUtils.equals(0, CARRAY, 0, CVALUES_NEG,
+				CVALUES_NEG.length));
+		assertTrue(ArrayUtils.equals(CVALUES_NEG.length + 1, CARRAY, 0,
+				CVALUES_POS, CVALUES_POS.length));
+	}
 
 	/*
 	 * ========================================================================
