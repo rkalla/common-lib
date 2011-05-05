@@ -33,26 +33,27 @@ public class ArrayUtils {
 	 * ========================================================================
 	 */
 
-	public static boolean equals(byte[] arrayA, byte[] arrayB) {
+	public static boolean equals(byte[] source, byte[] values) {
 		// Short-circuit in simple cases.
-		if ((arrayA == arrayB) || (arrayA == null && arrayB == null))
+		if ((source == values) || (source == null && values == null))
 			return true;
-		else if ((arrayA == null && arrayB != null)
-				|| (arrayA != null && arrayB == null))
+		else if ((source == null && values != null)
+				|| (source != null && values == null))
 			return false;
-		else if (arrayA.length != arrayB.length)
+		else if (source.length != values.length)
 			return false;
 
-		return equals(0, arrayA, 0, arrayB, arrayB.length);
+		return equals(0, source, 0, values, values.length);
 	}
 
-	public static boolean equals(int indexA, byte[] arrayA, int indexB,
-			byte[] arrayB, int length) throws IllegalArgumentException {
+	public static boolean equals(int sourceIndex, byte[] source,
+			int valuesIndex, byte[] values, int length)
+			throws IllegalArgumentException {
 		// Short-circuit in simple cases.
-		if (arrayA == arrayB)
+		if (source == values)
 			return true;
-		else if ((arrayA == null && arrayB != null)
-				|| (arrayA != null && arrayB == null))
+		else if ((source == null && values != null)
+				|| (source != null && values == null))
 			return false;
 
 		/*
@@ -60,23 +61,46 @@ public class ArrayUtils {
 		 * code below it to be simpler. We have to do these sanity checks at
 		 * SOME regardless.
 		 */
-		if (indexA < 0 || indexB < 0 || length < 0
-				|| (indexA + length) > arrayA.length
-				|| (indexB + length) > arrayB.length)
-			throw new IllegalArgumentException("indexA [" + indexA
-					+ "] and indexB [" + indexB + "] must be >= 0. length ["
-					+ length + "] must be >= 0. (indexA + length) ["
-					+ (indexA + length) + "] must be <= arrayA.length ["
-					+ arrayA.length + "]. (indexB + length) ["
-					+ (indexB + length) + "]  must be <= arrayB.length ["
-					+ arrayB.length + "].");
+		if (sourceIndex < 0 || valuesIndex < 0 || length < 0
+				|| (sourceIndex + length) > source.length
+				|| (valuesIndex + length) > values.length)
+			throw new IllegalArgumentException("sourceIndex [" + sourceIndex
+					+ "] and valuesIndex [" + valuesIndex
+					+ "] must be >= 0. length [" + length
+					+ "] must be >= 0. (sourceIndex + length) ["
+					+ (sourceIndex + length) + "] must be <= source.length ["
+					+ source.length + "]. (valuesIndex + length) ["
+					+ (valuesIndex + length) + "]  must be <= values.length ["
+					+ values.length + "].");
 
 		for (int i = 0; i < length; i++) {
-			if (arrayA[indexA + i] != arrayB[indexB + i])
+			if (source[sourceIndex + i] != values[valuesIndex + i])
 				return false;
 		}
 
 		return true;
+	}
+
+	public static byte[] ensureCapacity(int capacity, byte[] array) {
+		return ensureCapacity(capacity, 1, array);
+	}
+
+	public static byte[] ensureCapacity(int capacity, float growthFactor,
+			byte[] array) {
+		if (capacity < array.length)
+			return array;
+
+		// Calculate the new capacity based on the growth factor.
+		int newCapacity = (int) ((float) array.length * growthFactor);
+
+		// Double new capacity it at least big enough for requested amount.
+		if (newCapacity < capacity)
+			newCapacity = capacity;
+
+		// Create new array and return it.
+		byte[] newArray = new byte[newCapacity];
+		System.arraycopy(array, 0, newArray, 0, array.length);
+		return newArray;
 	}
 
 	/*
@@ -377,26 +401,27 @@ public class ArrayUtils {
 	 * ########################################################################
 	 * ========================================================================
 	 */
-	public static boolean equals(char[] arrayA, char[] arrayB) {
+	public static boolean equals(char[] source, char[] values) {
 		// Short-circuit in simple cases.
-		if ((arrayA == arrayB) || (arrayA == null && arrayB == null))
+		if ((source == values) || (source == null && values == null))
 			return true;
-		else if ((arrayA == null && arrayB != null)
-				|| (arrayA != null && arrayB == null))
+		else if ((source == null && values != null)
+				|| (source != null && values == null))
 			return false;
-		else if (arrayA.length != arrayB.length)
+		else if (source.length != values.length)
 			return false;
 
-		return equals(0, arrayA, 0, arrayB, arrayB.length);
+		return equals(0, source, 0, values, values.length);
 	}
 
-	public static boolean equals(int indexA, char[] arrayA, int indexB,
-			char[] arrayB, int length) throws IllegalArgumentException {
+	public static boolean equals(int sourceIndex, char[] source,
+			int valuesIndex, char[] values, int length)
+			throws IllegalArgumentException {
 		// Short-circuit in simple cases.
-		if (arrayA == arrayB)
+		if (source == values)
 			return true;
-		else if ((arrayA == null && arrayB != null)
-				|| (arrayA != null && arrayB == null))
+		else if ((source == null && values != null)
+				|| (source != null && values == null))
 			return false;
 
 		/*
@@ -404,23 +429,46 @@ public class ArrayUtils {
 		 * code below it to be simpler. We have to do these sanity checks at
 		 * SOME regardless.
 		 */
-		if (indexA < 0 || indexB < 0 || length < 0
-				|| (indexA + length) > arrayA.length
-				|| (indexB + length) > arrayB.length)
-			throw new IllegalArgumentException("indexA [" + indexA
-					+ "] and indexB [" + indexB + "] must be >= 0. length ["
-					+ length + "] must be >= 0. (indexA + length) ["
-					+ (indexA + length) + "] must be <= arrayA.length ["
-					+ arrayA.length + "]. (indexB + length) ["
-					+ (indexB + length) + "]  must be <= arrayB.length ["
-					+ arrayB.length + "].");
+		if (sourceIndex < 0 || valuesIndex < 0 || length < 0
+				|| (sourceIndex + length) > source.length
+				|| (valuesIndex + length) > values.length)
+			throw new IllegalArgumentException("sourceIndex [" + sourceIndex
+					+ "] and valuesIndex [" + valuesIndex
+					+ "] must be >= 0. length [" + length
+					+ "] must be >= 0. (sourceIndex + length) ["
+					+ (sourceIndex + length) + "] must be <= source.length ["
+					+ source.length + "]. (valuesIndex + length) ["
+					+ (valuesIndex + length) + "]  must be <= values.length ["
+					+ values.length + "].");
 
 		for (int i = 0; i < length; i++) {
-			if (arrayA[indexA + i] != arrayB[indexB + i])
+			if (source[sourceIndex + i] != values[valuesIndex + i])
 				return false;
 		}
 
 		return true;
+	}
+
+	public static char[] ensureCapacity(int capacity, char[] array) {
+		return ensureCapacity(capacity, 1, array);
+	}
+
+	public static char[] ensureCapacity(int capacity, float growthFactor,
+			char[] array) {
+		if (capacity < array.length)
+			return array;
+
+		// Calculate the new capacity based on the growth factor.
+		int newCapacity = (int) ((float) array.length * growthFactor);
+
+		// Double new capacity it at least big enough for requested amount.
+		if (newCapacity < capacity)
+			newCapacity = capacity;
+
+		// Create new array and return it.
+		char[] newArray = new char[newCapacity];
+		System.arraycopy(array, 0, newArray, 0, array.length);
+		return newArray;
 	}
 
 	/*

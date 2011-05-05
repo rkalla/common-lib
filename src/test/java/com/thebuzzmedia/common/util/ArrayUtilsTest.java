@@ -74,6 +74,29 @@ public class ArrayUtilsTest {
 	}
 
 	@Test
+	public void testEnsureCapacityIBa() {
+		assertEquals(BARRAY,
+				ArrayUtils.ensureCapacity(BARRAY.length - 1, BARRAY));
+		assertNotSame(BARRAY, ArrayUtils.ensureCapacity(BARRAY.length, BARRAY));
+
+		byte[] array = ArrayUtils.ensureCapacity(BARRAY.length, BARRAY);
+		assertEquals(BARRAY.length, array.length);
+		assertTrue(ArrayUtils.equals(0, array, 0, BARRAY, BARRAY.length));
+	}
+
+	@Test
+	public void testEnsureCapacityIFBa() {
+		assertEquals(BARRAY,
+				ArrayUtils.ensureCapacity(BARRAY.length - 1, 2, BARRAY));
+		assertNotSame(BARRAY,
+				ArrayUtils.ensureCapacity(BARRAY.length, 2, BARRAY));
+
+		byte[] array = ArrayUtils.ensureCapacity(BARRAY.length, 2, BARRAY);
+		assertEquals(BARRAY.length * 2, array.length);
+		assertTrue(ArrayUtils.equals(0, array, 0, BARRAY, BARRAY.length));
+	}
+
+	@Test
 	public void testIndexOfBaB() {
 		try {
 			ArrayUtils.indexOf(null, (byte) 0);
@@ -679,6 +702,29 @@ public class ArrayUtilsTest {
 				CVALUES_NEG.length));
 		assertTrue(ArrayUtils.equals(CVALUES_NEG.length + 1, CARRAY, 0,
 				CVALUES_POS, CVALUES_POS.length));
+	}
+
+	@Test
+	public void testEnsureCapacityICa() {
+		assertEquals(CARRAY,
+				ArrayUtils.ensureCapacity(CARRAY.length - 1, CARRAY));
+		assertNotSame(CARRAY, ArrayUtils.ensureCapacity(CARRAY.length, CARRAY));
+
+		char[] array = ArrayUtils.ensureCapacity(CARRAY.length, CARRAY);
+		assertEquals(CARRAY.length, array.length);
+		assertTrue(ArrayUtils.equals(0, array, 0, CARRAY, CARRAY.length));
+	}
+
+	@Test
+	public void testEnsureCapacityIFCa() {
+		assertEquals(CARRAY,
+				ArrayUtils.ensureCapacity(CARRAY.length - 1, 2, CARRAY));
+		assertNotSame(CARRAY,
+				ArrayUtils.ensureCapacity(CARRAY.length, 2, CARRAY));
+
+		char[] array = ArrayUtils.ensureCapacity(CARRAY.length, 2, CARRAY);
+		assertEquals(CARRAY.length * 2, array.length);
+		assertTrue(ArrayUtils.equals(0, array, 0, CARRAY, CARRAY.length));
 	}
 
 	/*
