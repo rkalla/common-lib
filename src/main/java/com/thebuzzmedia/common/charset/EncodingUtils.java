@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class EncodingUtils {
 	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.util.encode.maxBufferSize";
-	
+
 	public static final int MAX_BUFFER_SIZE = Integer.getInteger(
 			MAX_BUFFER_SIZE_PROPERTY_NAME, 8192);
 
@@ -60,20 +60,28 @@ public class EncodingUtils {
 				CharBuffer.wrap(array, index, length), charset));
 	}
 
+	public static byte[] encode(CharSequence chars) {
+		return (chars == null ? null : encode(CharBuffer.wrap(chars)));
+	}
+
+	public static byte[] encode(CharSequence chars, Charset charset) {
+		return (chars == null ? null : encode(CharBuffer.wrap(chars), charset));
+	}
+
 	public static byte[] encode(CharBuffer source)
 			throws IllegalArgumentException {
 		return encode(source, UTF8_CHARSET);
 	}
 
-	public static byte[] encode(CharBuffer source, Charset charset)
+	public static byte[] encode(CharBuffer buffer, Charset charset)
 			throws IllegalArgumentException {
 		byte[] result = null;
 
-		if (source != null) {
+		if (buffer != null) {
 			// Get the encoder for this charset, creating it if necessary.
 			CharsetEncoder encoder = getEncoder(charset);
 			int optimalSize = Math.round(encoder.averageBytesPerChar()
-					* (float) source.remaining());
+					* (float) buffer.remaining());
 
 			/*
 			 * In order to conserve memory, we create a target buffer size that
@@ -104,7 +112,7 @@ public class EncodingUtils {
 			// Reset the encoder
 			encoder.reset();
 
-			while (source.hasRemaining()) {
+			while (buffer.hasRemaining()) {
 				// Reset the encode buffer
 				encodeBuffer.clear();
 
@@ -113,7 +121,7 @@ public class EncodingUtils {
 				 * indicate that we aren't sure if we are done with the encode
 				 * operation yet.
 				 */
-				encoder.encode(source, encodeBuffer, false);
+				encoder.encode(buffer, encodeBuffer, false);
 
 				// Prepare buffer to be read from.
 				encodeBuffer.flip();
@@ -127,7 +135,7 @@ public class EncodingUtils {
 				resultLength += appendLength;
 
 				// If there is no more to decode, go through finalization
-				if (!source.hasRemaining()) {
+				if (!buffer.hasRemaining()) {
 					encodeBuffer.clear();
 
 					/*
@@ -136,7 +144,7 @@ public class EncodingUtils {
 					 * flush out any pending operations once we know we've hit
 					 * the end of the chars to decode.
 					 */
-					encoder.encode(source, encodeBuffer, true);
+					encoder.encode(buffer, encodeBuffer, true);
 					encoder.flush(encodeBuffer);
 
 					encodeBuffer.flip();

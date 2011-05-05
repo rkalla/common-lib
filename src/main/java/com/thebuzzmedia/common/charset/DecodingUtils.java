@@ -65,11 +65,11 @@ public class DecodingUtils {
 		return decode(source, UTF8_CHARSET);
 	}
 
-	public static char[] decode(ByteBuffer source, Charset charset)
+	public static char[] decode(ByteBuffer buffer, Charset charset)
 			throws IllegalArgumentException {
 		char[] result = null;
 
-		if (source != null) {
+		if (buffer != null) {
 			// Get the decoder for this charset, creating it if necessary.
 			CharsetDecoder decoder = getDecoder(charset);
 
@@ -85,7 +85,7 @@ public class DecodingUtils {
 			 * remaining byte count as our target size is a good upper bound for
 			 * our target buffer.
 			 */
-			int optimalSize = (source.remaining() < MAX_BUFFER_SIZE ? source
+			int optimalSize = (buffer.remaining() < MAX_BUFFER_SIZE ? buffer
 					.remaining() : MAX_BUFFER_SIZE);
 			CharBuffer decodeBuffer = CharBuffer.allocate(optimalSize);
 
@@ -105,24 +105,24 @@ public class DecodingUtils {
 			 */
 			result = new char[optimalSize];
 			int resultLength = 0;
-			
+
 			// Reset the decoder
 			decoder.reset();
 
-			while (source.hasRemaining()) {
+			while (buffer.hasRemaining()) {
 				// Reset the decode buffer
 				decodeBuffer.clear();
-				
+
 				/*
 				 * Decode the first buffer.capacity chars, passing 'false' to
 				 * indicate that we aren't sure if we are done with the decode
 				 * operation yet.
 				 */
-				decoder.decode(source, decodeBuffer, false);
-				
+				decoder.decode(buffer, decodeBuffer, false);
+
 				// Prepare buffer to be read from.
 				decodeBuffer.flip();
-				
+
 				int appendLength = decodeBuffer.remaining();
 
 				// Append what we successfully decoded to our tally
@@ -132,7 +132,7 @@ public class DecodingUtils {
 				resultLength += appendLength;
 
 				// If there is no more to decode, go through finalization
-				if (!source.hasRemaining()) {
+				if (!buffer.hasRemaining()) {
 					decodeBuffer.clear();
 
 					/*
@@ -141,7 +141,7 @@ public class DecodingUtils {
 					 * flush out any pending operations once we know we've hit
 					 * the end of the chars to decode.
 					 */
-					decoder.decode(source, decodeBuffer, true);
+					decoder.decode(buffer, decodeBuffer, true);
 					decoder.flush(decodeBuffer);
 
 					decodeBuffer.flip();
