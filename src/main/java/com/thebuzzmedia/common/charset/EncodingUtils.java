@@ -1,3 +1,18 @@
+/**   
+ * Copyright 2011 The Buzz Media, LLC
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.thebuzzmedia.common.charset;
 
 import java.nio.ByteBuffer;
@@ -8,8 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EncodingUtils {
+	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.util.encode.maxBufferSize";
+	
 	public static final int MAX_BUFFER_SIZE = Integer.getInteger(
-			"tbm.common.util.encode.maxBufferSize", 8192);
+			MAX_BUFFER_SIZE_PROPERTY_NAME, 8192);
 
 	public static final Charset ASCII_CHARSET = Charset.forName("ASCII");
 	public static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
@@ -88,6 +105,9 @@ public class EncodingUtils {
 			encoder.reset();
 
 			while (source.hasRemaining()) {
+				// Reset the encode buffer
+				encodeBuffer.clear();
+
 				/*
 				 * Encode the first buffer.capacity chars, passing 'false' to
 				 * indicate that we aren't sure if we are done with the encode
@@ -95,7 +115,9 @@ public class EncodingUtils {
 				 */
 				encoder.encode(source, encodeBuffer, false);
 
+				// Prepare buffer to be read from.
 				encodeBuffer.flip();
+
 				int appendLength = encodeBuffer.remaining();
 
 				// Append what we successfully encoded to our tally
@@ -132,7 +154,8 @@ public class EncodingUtils {
 
 			// Last-check to make sure our result is exactly the right size
 			if (result.length != resultLength) {
-				// TODO: See how often this runs, see if we can calculate a better guess above.
+				// TODO: See how often this runs, see if we can calculate a
+				// better guess above.
 				byte[] newArray = new byte[resultLength];
 				System.arraycopy(result, 0, newArray, 0, resultLength);
 				result = newArray;

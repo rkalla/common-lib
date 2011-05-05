@@ -15,6 +15,7 @@
  */
 package com.thebuzzmedia.common.util;
 
+// TODO: Add equals methods that accept index and offsets to do comparisons
 public class ArrayUtils {
 	public static final int INVALID_INDEX = -1;
 

@@ -1,3 +1,18 @@
+/**   
+ * Copyright 2011 The Buzz Media, LLC
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.thebuzzmedia.common.charset;
 
 import java.nio.ByteBuffer;
@@ -8,8 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DecodingUtils {
+	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.util.decode.maxBufferSize";
+
 	public static final int MAX_BUFFER_SIZE = Integer.getInteger(
-			"tbm.common.util.decode.maxBufferSize", 8192);
+			MAX_BUFFER_SIZE_PROPERTY_NAME, 8192);
 
 	public static final Charset ASCII_CHARSET = Charset.forName("ASCII");
 	public static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
@@ -88,19 +105,24 @@ public class DecodingUtils {
 			 */
 			result = new char[optimalSize];
 			int resultLength = 0;
-
+			
 			// Reset the decoder
 			decoder.reset();
 
 			while (source.hasRemaining()) {
+				// Reset the decode buffer
+				decodeBuffer.clear();
+				
 				/*
 				 * Decode the first buffer.capacity chars, passing 'false' to
 				 * indicate that we aren't sure if we are done with the decode
 				 * operation yet.
 				 */
 				decoder.decode(source, decodeBuffer, false);
-
+				
+				// Prepare buffer to be read from.
 				decodeBuffer.flip();
+				
 				int appendLength = decodeBuffer.remaining();
 
 				// Append what we successfully decoded to our tally
@@ -137,7 +159,8 @@ public class DecodingUtils {
 
 			// Last-check to make sure our result is exactly the right size
 			if (result.length != resultLength) {
-				// TODO: See how often this runs, see if we can calculate a better guess above.
+				// TODO: See how often this runs, see if we can calculate a
+				// better guess above.
 				char[] newArray = new char[resultLength];
 				System.arraycopy(result, 0, newArray, 0, resultLength);
 				result = newArray;
