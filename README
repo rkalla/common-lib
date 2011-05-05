@@ -4,6 +4,15 @@ http://www.thebuzzmedia.com/software/common-lib-common-java-utility-library/
 
 Changelog
 ---------
+1.1
+	* ArrayUtils additions
+		- equals
+		- ensureCapacity
+		- all methods apply to both byte[] and char[]
+	* Charset util additions
+		- Added DecodingUtils
+		- Added EncodingUtils
+	* Added test cases for all new methods and classes.
 
 1.0
 	* Initial public release.
