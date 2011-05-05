@@ -148,17 +148,57 @@ public class EncodingUtilsTest {
 	}
 
 	@Test
+	public void testEncodeCS() {
+		String chars = new String(ASCII_DATA, 0, asciiLength);
+		byte[] ascii = EncodingUtils.encode(chars);
+
+		assertEquals(asciiChecksumLength, ascii.length);
+
+		for (int i = 0; i < asciiChecksumLength; i++)
+			assertEquals(ASCII_CHECKSUM[i], ascii[i]);
+
+		chars = new String(UTF8_DATA, 0, utf8Length);
+		byte[] utf8 = EncodingUtils.encode(chars);
+
+		assertEquals(utf8ChecksumLength, utf8.length);
+
+		for (int i = 0; i < utf8ChecksumLength; i++)
+			assertEquals(UTF8_CHECKSUM[i], utf8[i]);
+	}
+
+	@Test
+	public void testEncodeCSCs() {
+		String chars = new String(ASCII_DATA, 0, asciiLength);
+		byte[] ascii = EncodingUtils.encode(chars, Charset.forName("ASCII"));
+
+		assertEquals(asciiChecksumLength, ascii.length);
+
+		for (int i = 0; i < asciiChecksumLength; i++)
+			assertEquals(ASCII_CHECKSUM[i], ascii[i]);
+
+		chars = new String(UTF8_DATA, 0, utf8Length);
+		byte[] utf8 = EncodingUtils.encode(chars, Charset.forName("UTF-8"));
+
+		assertEquals(utf8ChecksumLength, utf8.length);
+
+		for (int i = 0; i < utf8ChecksumLength; i++)
+			assertEquals(UTF8_CHECKSUM[i], utf8[i]);
+	}
+
+	@Test
 	public void testEncodeBb() {
 		CharBuffer cb = CharBuffer.wrap(ASCII_DATA, 0, asciiLength);
 		byte[] ascii = EncodingUtils.encode(cb);
 
-		assertEquals(asciiChecksumLength, asciiLength);
+		assertEquals(asciiChecksumLength, ascii.length);
 
 		for (int i = 0; i < asciiChecksumLength; i++)
 			assertEquals(ASCII_CHECKSUM[i], ascii[i]);
 
 		cb = CharBuffer.wrap(UTF8_DATA, 0, utf8Length);
 		byte[] utf8 = EncodingUtils.encode(cb);
+
+		assertEquals(utf8ChecksumLength, utf8.length);
 
 		for (int i = 0; i < utf8ChecksumLength; i++)
 			assertEquals(UTF8_CHECKSUM[i], utf8[i]);
@@ -169,13 +209,15 @@ public class EncodingUtilsTest {
 		CharBuffer cb = CharBuffer.wrap(ASCII_DATA, 0, asciiLength);
 		byte[] ascii = EncodingUtils.encode(cb, Charset.forName("ASCII"));
 
-		assertEquals(asciiChecksumLength, asciiLength);
+		assertEquals(asciiChecksumLength, ascii.length);
 
 		for (int i = 0; i < asciiChecksumLength; i++)
 			assertEquals(ASCII_CHECKSUM[i], ascii[i]);
 
 		cb = CharBuffer.wrap(UTF8_DATA, 0, utf8Length);
 		byte[] utf8 = EncodingUtils.encode(cb, Charset.forName("UTF-8"));
+
+		assertEquals(utf8ChecksumLength, utf8.length);
 
 		for (int i = 0; i < utf8ChecksumLength; i++)
 			assertEquals(UTF8_CHECKSUM[i], utf8[i]);
