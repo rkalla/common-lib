@@ -109,14 +109,14 @@ public class DecodingUtilsTest {
 
 	@Test
 	public void testDecodeIIBa() {
-		char[] ascii = DecodingUtils.decode(0, asciiLength, ASCII_DATA);
+		char[] ascii = DecodingUtils.decode(ASCII_DATA, 0, asciiLength);
 
 		assertEquals(asciiChecksumLength, ascii.length);
 
 		for (int i = 0; i < ascii.length; i++)
 			assertEquals(ASCII_CHECKSUM[i], ascii[i]);
 
-		char[] utf8 = DecodingUtils.decode(0, utf8Length, UTF8_DATA);
+		char[] utf8 = DecodingUtils.decode(UTF8_DATA, 0, utf8Length);
 
 		// At most no longer than original bytes read.
 		assertTrue(utf8.length <= utf8Length);
@@ -128,16 +128,16 @@ public class DecodingUtilsTest {
 
 	@Test
 	public void testDecodeIIBaCs() {
-		char[] ascii = DecodingUtils.decode(0, asciiLength, ASCII_DATA,
-				Charset.forName("ASCII"));
+		char[] ascii = DecodingUtils.decode(ASCII_DATA,
+				Charset.forName("ASCII"), 0, asciiLength);
 
 		assertEquals(asciiChecksumLength, ascii.length);
 
 		for (int i = 0; i < ascii.length; i++)
 			assertEquals(ASCII_CHECKSUM[i], ascii[i]);
 
-		char[] utf8 = DecodingUtils.decode(0, utf8Length, UTF8_DATA,
-				Charset.forName("UTF-8"));
+		char[] utf8 = DecodingUtils.decode(UTF8_DATA, Charset.forName("UTF-8"),
+				0, utf8Length);
 
 		// At most no longer than original bytes read.
 		assertTrue(utf8.length <= utf8Length);

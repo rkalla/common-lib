@@ -41,21 +41,21 @@ public class DecodingUtils {
 	}
 
 	public static char[] decode(byte[] array) {
-		return (array == null ? null : decode(0, array.length, array,
-				UTF8_CHARSET));
+		return (array == null ? null : decode(array, UTF8_CHARSET, 0,
+				array.length));
 	}
 
 	public static char[] decode(byte[] array, Charset charset) {
-		return (array == null ? null : decode(0, array.length, array, charset));
+		return (array == null ? null : decode(array, charset, 0, array.length));
 	}
 
-	public static char[] decode(int index, int length, byte[] array) {
+	public static char[] decode(byte[] array, int index, int length) {
 		return (array == null ? null : decode(
 				ByteBuffer.wrap(array, index, length), UTF8_CHARSET));
 	}
 
-	public static char[] decode(int index, int length, byte[] array,
-			Charset charset) {
+	public static char[] decode(byte[] array, Charset charset, int index,
+			int length) {
 		return (array == null ? null : decode(
 				ByteBuffer.wrap(array, index, length), charset));
 	}

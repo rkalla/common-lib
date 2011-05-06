@@ -41,21 +41,21 @@ public class EncodingUtils {
 	}
 
 	public static byte[] encode(char[] array) {
-		return (array == null ? null : encode(0, array.length, array,
-				UTF8_CHARSET));
+		return (array == null ? null : encode(array, UTF8_CHARSET, 0,
+				array.length));
 	}
 
 	public static byte[] encode(char[] array, Charset charset) {
-		return (array == null ? null : encode(0, array.length, array, charset));
+		return (array == null ? null : encode(array, charset, 0, array.length));
 	}
 
-	public static byte[] encode(int index, int length, char[] array) {
+	public static byte[] encode(char[] array, int index, int length) {
 		return (array == null ? null : encode(
 				CharBuffer.wrap(array, index, length), UTF8_CHARSET));
 	}
 
-	public static byte[] encode(int index, int length, char[] array,
-			Charset charset) {
+	public static byte[] encode(char[] array, Charset charset, int index,
+			int length) {
 		return (array == null ? null : encode(
 				CharBuffer.wrap(array, index, length), charset));
 	}

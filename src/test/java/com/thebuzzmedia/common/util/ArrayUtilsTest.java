@@ -41,148 +41,221 @@ public class ArrayUtilsTest {
 	public static final char[] CVALUES_ZERO = { '0' };
 	public static final char[] CVALUES_POS = { '1', '2', '3', '4', '5' };
 
-	/*
-	 * ========================================================================
-	 * byte[] array, byte value
-	 * ========================================================================
-	 */
 	@Test
-	public void testEqualsBaBa() {
-		assertFalse(ArrayUtils.equals((byte[]) null, BARRAY));
-		assertFalse(ArrayUtils.equals(BARRAY, (byte[]) null));
-		assertFalse(ArrayUtils.equals(BVALUES_POS, BARRAY));
+	public void testAppendBaBa() {
+		try {
+			ArrayUtils.append((byte[]) null, (byte[]) null);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 
-		assertTrue(ArrayUtils.equals((byte[]) null, (byte[]) null));
-		assertTrue(ArrayUtils.equals(BARRAY, BARRAY));
+		try {
+			ArrayUtils.append((byte[]) null, BARRAY);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 
-		byte[] copy = new byte[BARRAY.length];
-		System.arraycopy(BARRAY, 0, copy, 0, BARRAY.length);
+		try {
+			ArrayUtils.append(BARRAY, (byte[]) null);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 
-		assertTrue(ArrayUtils.equals(BARRAY, copy));
+		byte[] array = new byte[0];
+
+		array = ArrayUtils.append(BVALUES_NEG, array);
+		array = ArrayUtils.append(BVALUES_ZERO, array);
+		array = ArrayUtils.append(BVALUES_POS, array);
+
+		assertEquals(BARRAY.length, array.length);
+		assertTrue(ArrayUtils.equals(BARRAY, array));
 	}
 
 	@Test
-	public void testEqualsIBaIBaI() {
-		assertFalse(ArrayUtils.equals(0, BARRAY, 0, null, BARRAY.length));
-		assertFalse(ArrayUtils.equals(0, null, 0, BARRAY, BARRAY.length));
+	public void testInsertBaBaI() {
+		try {
+			ArrayUtils.insert((byte[]) null, (byte[]) null, 0);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 
-		assertTrue(ArrayUtils.equals(0, BARRAY, 0, BARRAY, BARRAY.length));
-		assertTrue(ArrayUtils.equals(0, BARRAY, 0, BVALUES_NEG,
-				BVALUES_NEG.length));
-		assertTrue(ArrayUtils.equals(BVALUES_NEG.length + 1, BARRAY, 0,
-				BVALUES_POS, BVALUES_POS.length));
+		try {
+			ArrayUtils.insert((byte[]) null, BARRAY, 0);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		try {
+			ArrayUtils.insert(BARRAY, (byte[]) null, 0);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		byte[] array = new byte[0];
+
+		array = ArrayUtils.insert(BVALUES_NEG, array, 0);
+		array = ArrayUtils.insert(BVALUES_ZERO, array, 0);
+		array = ArrayUtils.insert(BVALUES_POS, array, 0);
+
+		assertEquals(BARRAY.length, array.length);
+
+		assertTrue(ArrayUtils.equals(BVALUES_POS, 0, array, 0,
+				BVALUES_POS.length));
+		assertTrue(ArrayUtils.equals(BVALUES_ZERO, 0, array,
+				BVALUES_POS.length, BVALUES_ZERO.length));
+		assertTrue(ArrayUtils.equals(BVALUES_NEG, 0, array, BVALUES_POS.length
+				+ BVALUES_ZERO.length, BVALUES_NEG.length));
 	}
 
 	@Test
 	public void testEnsureCapacityIBa() {
 		assertEquals(BARRAY,
-				ArrayUtils.ensureCapacity(BARRAY.length - 1, BARRAY));
-		assertNotSame(BARRAY, ArrayUtils.ensureCapacity(BARRAY.length, BARRAY));
+				ArrayUtils.ensureCapacity(BARRAY, BARRAY.length - 1));
+		assertNotSame(BARRAY, ArrayUtils.ensureCapacity(BARRAY, BARRAY.length));
 
-		byte[] array = ArrayUtils.ensureCapacity(BARRAY.length, BARRAY);
+		byte[] array = ArrayUtils.ensureCapacity(BARRAY, BARRAY.length);
 		assertEquals(BARRAY.length, array.length);
-		assertTrue(ArrayUtils.equals(0, array, 0, BARRAY, BARRAY.length));
+		assertTrue(ArrayUtils.equals(BARRAY, 0, array, 0, BARRAY.length));
 	}
 
 	@Test
 	public void testEnsureCapacityIFBa() {
 		assertEquals(BARRAY,
-				ArrayUtils.ensureCapacity(BARRAY.length - 1, 2, BARRAY));
+				ArrayUtils.ensureCapacity(BARRAY, BARRAY.length - 1, 2));
 		assertNotSame(BARRAY,
-				ArrayUtils.ensureCapacity(BARRAY.length, 2, BARRAY));
+				ArrayUtils.ensureCapacity(BARRAY, BARRAY.length, 2));
 
-		byte[] array = ArrayUtils.ensureCapacity(BARRAY.length, 2, BARRAY);
+		byte[] array = ArrayUtils.ensureCapacity(BARRAY, BARRAY.length, 2);
 		assertEquals(BARRAY.length * 2, array.length);
-		assertTrue(ArrayUtils.equals(0, array, 0, BARRAY, BARRAY.length));
+		assertTrue(ArrayUtils.equals(BARRAY, 0, array, 0, BARRAY.length));
+	}
+
+	/*
+	 * ========================================================================
+	 * byte[] array, byte value
+	 * ========================================================================
+	 */
+
+	@Test
+	public void testEqualsBaBa() {
+		assertFalse(ArrayUtils.equals(BARRAY, (byte[]) null));
+		assertFalse(ArrayUtils.equals((byte[]) null, BARRAY));
+		assertFalse(ArrayUtils.equals(BARRAY, BVALUES_POS));
+	
+		assertTrue(ArrayUtils.equals((byte[]) null, (byte[]) null));
+		assertTrue(ArrayUtils.equals(BARRAY, BARRAY));
+	
+		byte[] copy = new byte[BARRAY.length];
+		System.arraycopy(BARRAY, 0, copy, 0, BARRAY.length);
+	
+		assertTrue(ArrayUtils.equals(copy, BARRAY));
+	}
+
+	@Test
+	public void testEqualsIBaIBaI() {
+		assertFalse(ArrayUtils.equals(null, 0, BARRAY, 0, BARRAY.length));
+		assertFalse(ArrayUtils.equals(BARRAY, 0, null, 0, BARRAY.length));
+	
+		assertTrue(ArrayUtils.equals(BARRAY, 0, BARRAY, 0, BARRAY.length));
+		assertTrue(ArrayUtils.equals(BVALUES_NEG, 0, BARRAY, 0,
+				BVALUES_NEG.length));
+		assertTrue(ArrayUtils.equals(BVALUES_POS, 0, BARRAY,
+				BVALUES_NEG.length + 1, BVALUES_POS.length));
 	}
 
 	@Test
 	public void testIndexOfBaB() {
 		try {
-			ArrayUtils.indexOf(null, (byte) 0);
+			ArrayUtils.indexOf((byte) 0, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(BARRAY, (byte) -5));
-		assertEquals(5, ArrayUtils.indexOf(BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.indexOf(BARRAY, (byte) 5));
+		assertEquals(0, ArrayUtils.indexOf((byte) -5, BARRAY));
+		assertEquals(5, ArrayUtils.indexOf((byte) 0, BARRAY));
+		assertEquals(10, ArrayUtils.indexOf((byte) 5, BARRAY));
 	}
 
 	@Test
 	public void testIndexOfIBaB() {
 		try {
-			ArrayUtils.indexOf(0, null, (byte) 0);
+			ArrayUtils.indexOf((byte) 0, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(-1, BARRAY, (byte) 0);
+			ArrayUtils.indexOf((byte) 0, BARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(0, BARRAY, (byte) -5));
-		assertEquals(5, ArrayUtils.indexOf(0, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.indexOf(0, BARRAY, (byte) 5));
+		assertEquals(0, ArrayUtils.indexOf((byte) -5, BARRAY, 0));
+		assertEquals(5, ArrayUtils.indexOf((byte) 0, BARRAY, 0));
+		assertEquals(10, ArrayUtils.indexOf((byte) 5, BARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.indexOf(5, BARRAY, (byte) -5));
-		assertEquals(5, ArrayUtils.indexOf(5, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.indexOf(5, BARRAY, (byte) 5));
+		assertEquals(-1, ArrayUtils.indexOf((byte) -5, BARRAY, 5));
+		assertEquals(5, ArrayUtils.indexOf((byte) 0, BARRAY, 5));
+		assertEquals(10, ArrayUtils.indexOf((byte) 5, BARRAY, 5));
 
-		assertEquals(-1, ArrayUtils.indexOf(10, BARRAY, (byte) -5));
-		assertEquals(-1, ArrayUtils.indexOf(10, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.indexOf(10, BARRAY, (byte) 5));
+		assertEquals(-1, ArrayUtils.indexOf((byte) -5, BARRAY, 10));
+		assertEquals(-1, ArrayUtils.indexOf((byte) 0, BARRAY, 10));
+		assertEquals(10, ArrayUtils.indexOf((byte) 5, BARRAY, 10));
 	}
 
 	@Test
 	public void testIndexOfIIBaB() {
 		try {
-			ArrayUtils.indexOf(0, 1, null, (byte) 0);
+			ArrayUtils.indexOf((byte) 0, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(-1, 1, BARRAY, (byte) 0);
+			ArrayUtils.indexOf((byte) 0, BARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(0, -1, BARRAY, (byte) 0);
+			ArrayUtils.indexOf((byte) 0, BARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(0, BARRAY.length * 2, BARRAY, (byte) 0);
+			ArrayUtils.indexOf((byte) 0, BARRAY, 0, BARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(0, BARRAY.length, BARRAY, (byte) -5));
-		assertEquals(5, ArrayUtils.indexOf(0, BARRAY.length, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.indexOf(0, BARRAY.length, BARRAY, (byte) 5));
+		assertEquals(0, ArrayUtils.indexOf((byte) -5, BARRAY, 0, BARRAY.length));
+		assertEquals(5, ArrayUtils.indexOf((byte) 0, BARRAY, 0, BARRAY.length));
+		assertEquals(10, ArrayUtils.indexOf((byte) 5, BARRAY, 0, BARRAY.length));
 
 		assertEquals(-1,
-				ArrayUtils.indexOf(5, BARRAY.length - 5, BARRAY, (byte) -5));
+				ArrayUtils.indexOf((byte) -5, BARRAY, 5, BARRAY.length - 5));
 		assertEquals(5,
-				ArrayUtils.indexOf(5, BARRAY.length - 5, BARRAY, (byte) 0));
+				ArrayUtils.indexOf((byte) 0, BARRAY, 5, BARRAY.length - 5));
 		assertEquals(10,
-				ArrayUtils.indexOf(5, BARRAY.length - 5, BARRAY, (byte) 5));
+				ArrayUtils.indexOf((byte) 5, BARRAY, 5, BARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.indexOf(10, 1, BARRAY, (byte) -5));
-		assertEquals(-1, ArrayUtils.indexOf(10, 1, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.indexOf(10, 1, BARRAY, (byte) 5));
+		assertEquals(-1, ArrayUtils.indexOf((byte) -5, BARRAY, 10, 1));
+		assertEquals(-1, ArrayUtils.indexOf((byte) 0, BARRAY, 10, 1));
+		assertEquals(10, ArrayUtils.indexOf((byte) 5, BARRAY, 10, 1));
 	}
 
 	/*
@@ -193,92 +266,92 @@ public class ArrayUtilsTest {
 	@Test
 	public void testIndexOfBaBa() {
 		try {
-			ArrayUtils.indexOf(null, BVALUES_ZERO);
+			ArrayUtils.indexOf(BVALUES_ZERO, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(BARRAY, BVALUES_NEG));
-		assertEquals(5, ArrayUtils.indexOf(BARRAY, BVALUES_ZERO));
-		assertEquals(6, ArrayUtils.indexOf(BARRAY, BVALUES_POS));
+		assertEquals(0, ArrayUtils.indexOf(BVALUES_NEG, BARRAY));
+		assertEquals(5, ArrayUtils.indexOf(BVALUES_ZERO, BARRAY));
+		assertEquals(6, ArrayUtils.indexOf(BVALUES_POS, BARRAY));
 	}
 
 	@Test
 	public void testIndexOfIBaBa() {
 		try {
-			ArrayUtils.indexOf(0, null, BVALUES_ZERO);
+			ArrayUtils.indexOf(BVALUES_ZERO, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(-1, BARRAY, BVALUES_ZERO);
+			ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(0, BARRAY, BVALUES_NEG));
-		assertEquals(5, ArrayUtils.indexOf(0, BARRAY, BVALUES_ZERO));
-		assertEquals(6, ArrayUtils.indexOf(0, BARRAY, BVALUES_POS));
+		assertEquals(0, ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 0));
+		assertEquals(5, ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 0));
+		assertEquals(6, ArrayUtils.indexOf(BVALUES_POS, BARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.indexOf(5, BARRAY, BVALUES_NEG));
-		assertEquals(5, ArrayUtils.indexOf(5, BARRAY, BVALUES_ZERO));
-		assertEquals(6, ArrayUtils.indexOf(6, BARRAY, BVALUES_POS));
+		assertEquals(-1, ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 5));
+		assertEquals(5, ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 5));
+		assertEquals(6, ArrayUtils.indexOf(BVALUES_POS, BARRAY, 6));
 
-		assertEquals(-1, ArrayUtils.indexOf(6, BARRAY, BVALUES_NEG));
-		assertEquals(-1, ArrayUtils.indexOf(10, BARRAY, BVALUES_ZERO));
+		assertEquals(-1, ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 6));
+		assertEquals(-1, ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 10));
 	}
 
 	@Test
 	public void testIndexOfIIBaBa() {
 		try {
-			ArrayUtils.indexOf(0, 1, null, BVALUES_ZERO);
+			ArrayUtils.indexOf(BVALUES_ZERO, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(-1, 1, BARRAY, BVALUES_ZERO);
+			ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(0, -1, BARRAY, BVALUES_ZERO);
+			ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(0, BARRAY.length * 2, BARRAY, BVALUES_ZERO);
+			ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 0, BARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.indexOf(0, BARRAY.length, BARRAY, BVALUES_NEG));
+				ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 0, BARRAY.length));
 		assertEquals(5,
-				ArrayUtils.indexOf(0, BARRAY.length, BARRAY, BVALUES_ZERO));
+				ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 0, BARRAY.length));
 		assertEquals(6,
-				ArrayUtils.indexOf(0, BARRAY.length, BARRAY, BVALUES_POS));
+				ArrayUtils.indexOf(BVALUES_POS, BARRAY, 0, BARRAY.length));
 
 		assertEquals(-1,
-				ArrayUtils.indexOf(5, BARRAY.length - 5, BARRAY, BVALUES_NEG));
+				ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 5, BARRAY.length - 5));
 		assertEquals(5,
-				ArrayUtils.indexOf(5, BARRAY.length - 5, BARRAY, BVALUES_ZERO));
+				ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 5, BARRAY.length - 5));
 		assertEquals(6,
-				ArrayUtils.indexOf(5, BARRAY.length - 5, BARRAY, BVALUES_POS));
+				ArrayUtils.indexOf(BVALUES_POS, BARRAY, 5, BARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.indexOf(6, 5, BARRAY, BVALUES_NEG));
-		assertEquals(5, ArrayUtils.indexOf(5, 1, BARRAY, BVALUES_ZERO));
-		assertEquals(-1, ArrayUtils.indexOf(2, 5, BARRAY, BVALUES_POS));
+		assertEquals(-1, ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 6, 5));
+		assertEquals(5, ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 5, 1));
+		assertEquals(-1, ArrayUtils.indexOf(BVALUES_POS, BARRAY, 2, 5));
 	}
 
 	/*
@@ -289,93 +362,93 @@ public class ArrayUtilsTest {
 	@Test
 	public void testIndexOfAnyBaBa() {
 		try {
-			ArrayUtils.indexOfAny(null, BVALUE_0);
+			ArrayUtils.indexOfAny(BVALUE_0, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOfAny(BARRAY, BVALUE_N5));
-		assertEquals(5, ArrayUtils.indexOfAny(BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(BARRAY, BVALUE_5));
+		assertEquals(0, ArrayUtils.indexOfAny(BVALUE_N5, BARRAY));
+		assertEquals(5, ArrayUtils.indexOfAny(BVALUE_0, BARRAY));
+		assertEquals(10, ArrayUtils.indexOfAny(BVALUE_5, BARRAY));
 	}
 
 	@Test
 	public void testIndexOfAnyIBaBa() {
 		try {
-			ArrayUtils.indexOfAny(0, null, BVALUE_0);
+			ArrayUtils.indexOfAny(BVALUE_0, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOfAny(-1, BARRAY, BVALUE_0);
+			ArrayUtils.indexOfAny(BVALUE_0, BARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOfAny(0, BARRAY, BVALUE_N5));
-		assertEquals(5, ArrayUtils.indexOfAny(0, BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(0, BARRAY, BVALUE_5));
+		assertEquals(0, ArrayUtils.indexOfAny(BVALUE_N5, BARRAY, 0));
+		assertEquals(5, ArrayUtils.indexOfAny(BVALUE_0, BARRAY, 0));
+		assertEquals(10, ArrayUtils.indexOfAny(BVALUE_5, BARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.indexOfAny(5, BARRAY, BVALUE_N5));
-		assertEquals(5, ArrayUtils.indexOfAny(5, BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(5, BARRAY, BVALUE_5));
+		assertEquals(-1, ArrayUtils.indexOfAny(BVALUE_N5, BARRAY, 5));
+		assertEquals(5, ArrayUtils.indexOfAny(BVALUE_0, BARRAY, 5));
+		assertEquals(10, ArrayUtils.indexOfAny(BVALUE_5, BARRAY, 5));
 
-		assertEquals(-1, ArrayUtils.indexOfAny(10, BARRAY, BVALUE_N5));
-		assertEquals(-1, ArrayUtils.indexOfAny(10, BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(10, BARRAY, BVALUE_5));
+		assertEquals(-1, ArrayUtils.indexOfAny(BVALUE_N5, BARRAY, 10));
+		assertEquals(-1, ArrayUtils.indexOfAny(BVALUE_0, BARRAY, 10));
+		assertEquals(10, ArrayUtils.indexOfAny(BVALUE_5, BARRAY, 10));
 	}
 
 	@Test
 	public void testIndexOfAnyIIBaBa() {
 		try {
-			ArrayUtils.indexOfAny(0, 1, null, BVALUE_0);
+			ArrayUtils.indexOfAny(BVALUE_0, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOfAny(-1, 1, BARRAY, BVALUE_0);
+			ArrayUtils.indexOfAny(BVALUE_0, BARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOfAny(0, -1, BARRAY, BVALUE_0);
+			ArrayUtils.indexOfAny(BVALUE_0, BARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOfAny(0, BARRAY.length * 2, BARRAY, BVALUE_0);
+			ArrayUtils.indexOfAny(BVALUE_0, BARRAY, 0, BARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.indexOfAny(0, BARRAY.length, BARRAY, BVALUE_N5));
+				ArrayUtils.indexOfAny(BVALUE_N5, BARRAY, 0, BARRAY.length));
 		assertEquals(5,
-				ArrayUtils.indexOfAny(0, BARRAY.length, BARRAY, BVALUE_0));
+				ArrayUtils.indexOfAny(BVALUE_0, BARRAY, 0, BARRAY.length));
 		assertEquals(10,
-				ArrayUtils.indexOfAny(0, BARRAY.length, BARRAY, BVALUE_5));
+				ArrayUtils.indexOfAny(BVALUE_5, BARRAY, 0, BARRAY.length));
 
 		assertEquals(-1,
-				ArrayUtils.indexOfAny(5, BARRAY.length - 5, BARRAY, BVALUE_N5));
+				ArrayUtils.indexOfAny(BVALUE_N5, BARRAY, 5, BARRAY.length - 5));
 		assertEquals(5,
-				ArrayUtils.indexOfAny(5, BARRAY.length - 5, BARRAY, BVALUE_0));
+				ArrayUtils.indexOfAny(BVALUE_0, BARRAY, 5, BARRAY.length - 5));
 		assertEquals(10,
-				ArrayUtils.indexOfAny(5, BARRAY.length - 5, BARRAY, BVALUE_5));
+				ArrayUtils.indexOfAny(BVALUE_5, BARRAY, 5, BARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.indexOfAny(10, 1, BARRAY, BVALUE_N5));
-		assertEquals(-1, ArrayUtils.indexOfAny(10, 1, BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(10, 1, BARRAY, BVALUE_5));
+		assertEquals(-1, ArrayUtils.indexOfAny(BVALUE_N5, BARRAY, 10, 1));
+		assertEquals(-1, ArrayUtils.indexOfAny(BVALUE_0, BARRAY, 10, 1));
+		assertEquals(10, ArrayUtils.indexOfAny(BVALUE_5, BARRAY, 10, 1));
 	}
 
 	/*
@@ -386,93 +459,93 @@ public class ArrayUtilsTest {
 	@Test
 	public void testLastIndexOfBaB() {
 		try {
-			ArrayUtils.lastIndexOf(null, (byte) 0);
+			ArrayUtils.lastIndexOf((byte) 0, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(BARRAY, (byte) -5));
-		assertEquals(5, ArrayUtils.lastIndexOf(BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.lastIndexOf(BARRAY, (byte) 5));
+		assertEquals(0, ArrayUtils.lastIndexOf((byte) -5, BARRAY));
+		assertEquals(5, ArrayUtils.lastIndexOf((byte) 0, BARRAY));
+		assertEquals(10, ArrayUtils.lastIndexOf((byte) 5, BARRAY));
 	}
 
 	@Test
 	public void testLastIndexOfIBaB() {
 		try {
-			ArrayUtils.lastIndexOf(0, null, (byte) 0);
+			ArrayUtils.lastIndexOf((byte) 0, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(-1, BARRAY, (byte) 0);
+			ArrayUtils.lastIndexOf((byte) 0, BARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(0, BARRAY, (byte) -5));
-		assertEquals(5, ArrayUtils.lastIndexOf(0, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.lastIndexOf(0, BARRAY, (byte) 5));
+		assertEquals(0, ArrayUtils.lastIndexOf((byte) -5, BARRAY, 0));
+		assertEquals(5, ArrayUtils.lastIndexOf((byte) 0, BARRAY, 0));
+		assertEquals(10, ArrayUtils.lastIndexOf((byte) 5, BARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(5, BARRAY, (byte) -5));
-		assertEquals(5, ArrayUtils.lastIndexOf(5, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.lastIndexOf(5, BARRAY, (byte) 5));
+		assertEquals(-1, ArrayUtils.lastIndexOf((byte) -5, BARRAY, 5));
+		assertEquals(5, ArrayUtils.lastIndexOf((byte) 0, BARRAY, 5));
+		assertEquals(10, ArrayUtils.lastIndexOf((byte) 5, BARRAY, 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, BARRAY, (byte) -5));
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.lastIndexOf(10, BARRAY, (byte) 5));
+		assertEquals(-1, ArrayUtils.lastIndexOf((byte) -5, BARRAY, 10));
+		assertEquals(-1, ArrayUtils.lastIndexOf((byte) 0, BARRAY, 10));
+		assertEquals(10, ArrayUtils.lastIndexOf((byte) 5, BARRAY, 10));
 	}
 
 	@Test
 	public void testLastIndexOfIIBaB() {
 		try {
-			ArrayUtils.lastIndexOf(0, 1, null, (byte) 0);
+			ArrayUtils.lastIndexOf((byte) 0, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(-1, 1, BARRAY, (byte) 0);
+			ArrayUtils.lastIndexOf((byte) 0, BARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(0, -1, BARRAY, (byte) 0);
+			ArrayUtils.lastIndexOf((byte) 0, BARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(0, BARRAY.length * 2, BARRAY, (byte) 0);
+			ArrayUtils.lastIndexOf((byte) 0, BARRAY, 0, BARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.lastIndexOf(0, BARRAY.length, BARRAY, (byte) -5));
+				ArrayUtils.lastIndexOf((byte) -5, BARRAY, 0, BARRAY.length));
 		assertEquals(5,
-				ArrayUtils.lastIndexOf(0, BARRAY.length, BARRAY, (byte) 0));
+				ArrayUtils.lastIndexOf((byte) 0, BARRAY, 0, BARRAY.length));
 		assertEquals(10,
-				ArrayUtils.lastIndexOf(0, BARRAY.length, BARRAY, (byte) 5));
+				ArrayUtils.lastIndexOf((byte) 5, BARRAY, 0, BARRAY.length));
 
 		assertEquals(-1,
-				ArrayUtils.lastIndexOf(5, BARRAY.length - 5, BARRAY, (byte) -5));
+				ArrayUtils.lastIndexOf((byte) -5, BARRAY, 5, BARRAY.length - 5));
 		assertEquals(5,
-				ArrayUtils.lastIndexOf(5, BARRAY.length - 5, BARRAY, (byte) 0));
+				ArrayUtils.lastIndexOf((byte) 0, BARRAY, 5, BARRAY.length - 5));
 		assertEquals(10,
-				ArrayUtils.lastIndexOf(5, BARRAY.length - 5, BARRAY, (byte) 5));
+				ArrayUtils.lastIndexOf((byte) 5, BARRAY, 5, BARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, 1, BARRAY, (byte) -5));
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, 1, BARRAY, (byte) 0));
-		assertEquals(10, ArrayUtils.lastIndexOf(10, 1, BARRAY, (byte) 5));
+		assertEquals(-1, ArrayUtils.lastIndexOf((byte) -5, BARRAY, 10, 1));
+		assertEquals(-1, ArrayUtils.lastIndexOf((byte) 0, BARRAY, 10, 1));
+		assertEquals(10, ArrayUtils.lastIndexOf((byte) 5, BARRAY, 10, 1));
 	}
 
 	/*
@@ -483,92 +556,92 @@ public class ArrayUtilsTest {
 	@Test
 	public void testLastIndexOfBaBa() {
 		try {
-			ArrayUtils.lastIndexOf(null, BVALUES_ZERO);
+			ArrayUtils.lastIndexOf(BVALUES_ZERO, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(BARRAY, BVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(BARRAY, BVALUES_ZERO));
-		assertEquals(6, ArrayUtils.lastIndexOf(BARRAY, BVALUES_POS));
+		assertEquals(0, ArrayUtils.lastIndexOf(BVALUES_NEG, BARRAY));
+		assertEquals(5, ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY));
+		assertEquals(6, ArrayUtils.lastIndexOf(BVALUES_POS, BARRAY));
 	}
 
 	@Test
 	public void testLastIndexOfIBaBa() {
 		try {
-			ArrayUtils.lastIndexOf(0, null, BVALUES_ZERO);
+			ArrayUtils.lastIndexOf(BVALUES_ZERO, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(-1, BARRAY, BVALUES_ZERO);
+			ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(0, BARRAY, BVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(0, BARRAY, BVALUES_ZERO));
-		assertEquals(6, ArrayUtils.lastIndexOf(0, BARRAY, BVALUES_POS));
+		assertEquals(0, ArrayUtils.lastIndexOf(BVALUES_NEG, BARRAY, 0));
+		assertEquals(5, ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, 0));
+		assertEquals(6, ArrayUtils.lastIndexOf(BVALUES_POS, BARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(5, BARRAY, BVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(5, BARRAY, BVALUES_ZERO));
-		assertEquals(6, ArrayUtils.lastIndexOf(6, BARRAY, BVALUES_POS));
+		assertEquals(-1, ArrayUtils.lastIndexOf(BVALUES_NEG, BARRAY, 5));
+		assertEquals(5, ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, 5));
+		assertEquals(6, ArrayUtils.lastIndexOf(BVALUES_POS, BARRAY, 6));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(6, BARRAY, BVALUES_NEG));
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, BARRAY, BVALUES_ZERO));
+		assertEquals(-1, ArrayUtils.lastIndexOf(BVALUES_NEG, BARRAY, 6));
+		assertEquals(-1, ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, 10));
 	}
 
 	@Test
 	public void testLastIndexOfIIBaBa() {
 		try {
-			ArrayUtils.lastIndexOf(0, 1, null, BVALUES_ZERO);
+			ArrayUtils.lastIndexOf(BVALUES_ZERO, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(-1, 1, BARRAY, BVALUES_ZERO);
+			ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(0, -1, BARRAY, BVALUES_ZERO);
+			ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(0, BARRAY.length * 2, BARRAY, BVALUES_ZERO);
+			ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, 0, BARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.lastIndexOf(0, BARRAY.length, BARRAY, BVALUES_NEG));
+				ArrayUtils.lastIndexOf(BVALUES_NEG, BARRAY, 0, BARRAY.length));
 		assertEquals(5,
-				ArrayUtils.lastIndexOf(0, BARRAY.length, BARRAY, BVALUES_ZERO));
+				ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, 0, BARRAY.length));
 		assertEquals(6,
-				ArrayUtils.lastIndexOf(0, BARRAY.length, BARRAY, BVALUES_POS));
+				ArrayUtils.lastIndexOf(BVALUES_POS, BARRAY, 0, BARRAY.length));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(5, BARRAY.length - 5, BARRAY,
-				BVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(5, BARRAY.length - 5, BARRAY,
-				BVALUES_ZERO));
-		assertEquals(6, ArrayUtils.lastIndexOf(5, BARRAY.length - 5, BARRAY,
-				BVALUES_POS));
+		assertEquals(-1, ArrayUtils.lastIndexOf(BVALUES_NEG, BARRAY, 5,
+				BARRAY.length - 5));
+		assertEquals(5, ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, 5,
+				BARRAY.length - 5));
+		assertEquals(6, ArrayUtils.lastIndexOf(BVALUES_POS, BARRAY, 5,
+				BARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(6, 5, BARRAY, BVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(5, 1, BARRAY, BVALUES_ZERO));
-		assertEquals(-1, ArrayUtils.lastIndexOf(2, 5, BARRAY, BVALUES_POS));
+		assertEquals(-1, ArrayUtils.lastIndexOf(BVALUES_NEG, BARRAY, 6, 5));
+		assertEquals(5, ArrayUtils.lastIndexOf(BVALUES_ZERO, BARRAY, 5, 1));
+		assertEquals(-1, ArrayUtils.lastIndexOf(BVALUES_POS, BARRAY, 2, 5));
 	}
 
 	/*
@@ -579,93 +652,93 @@ public class ArrayUtilsTest {
 	@Test
 	public void testLastIndexOfAnyBaBa() {
 		try {
-			ArrayUtils.lastIndexOfAny(null, BVALUE_0);
+			ArrayUtils.lastIndexOfAny(BVALUE_0, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOfAny(BARRAY, BVALUE_N5));
-		assertEquals(5, ArrayUtils.lastIndexOfAny(BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(BARRAY, BVALUE_5));
+		assertEquals(0, ArrayUtils.lastIndexOfAny(BVALUE_N5, BARRAY));
+		assertEquals(5, ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY));
 	}
 
 	@Test
 	public void testLastIndexOfAnyIBaBa() {
 		try {
-			ArrayUtils.lastIndexOfAny(0, null, BVALUE_0);
+			ArrayUtils.lastIndexOfAny(BVALUE_0, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOfAny(-1, BARRAY, BVALUE_0);
+			ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOfAny(0, BARRAY, BVALUE_N5));
-		assertEquals(5, ArrayUtils.lastIndexOfAny(0, BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(0, BARRAY, BVALUE_5));
+		assertEquals(0, ArrayUtils.lastIndexOfAny(BVALUE_N5, BARRAY, 0));
+		assertEquals(5, ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 0));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(5, BARRAY, BVALUE_N5));
-		assertEquals(5, ArrayUtils.lastIndexOfAny(5, BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(5, BARRAY, BVALUE_5));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(BVALUE_N5, BARRAY, 5));
+		assertEquals(5, ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 5));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY, 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(10, BARRAY, BVALUE_N5));
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(10, BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(10, BARRAY, BVALUE_5));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(BVALUE_N5, BARRAY, 10));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 10));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY, 10));
 	}
 
 	@Test
 	public void testLastIndexOfAnyIIBaBa() {
 		try {
-			ArrayUtils.lastIndexOfAny(0, 1, null, BVALUE_0);
+			ArrayUtils.lastIndexOfAny(BVALUE_0, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOfAny(-1, 1, BARRAY, BVALUE_0);
+			ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOfAny(0, -1, BARRAY, BVALUE_0);
+			ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOfAny(0, BARRAY.length * 2, BARRAY, BVALUE_0);
+			ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 0, BARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.lastIndexOfAny(0, BARRAY.length, BARRAY, BVALUE_N5));
+				ArrayUtils.lastIndexOfAny(BVALUE_N5, BARRAY, 0, BARRAY.length));
 		assertEquals(5,
-				ArrayUtils.lastIndexOfAny(0, BARRAY.length, BARRAY, BVALUE_0));
+				ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 0, BARRAY.length));
 		assertEquals(10,
-				ArrayUtils.lastIndexOfAny(0, BARRAY.length, BARRAY, BVALUE_5));
+				ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY, 0, BARRAY.length));
 
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(5, BARRAY.length - 5,
-				BARRAY, BVALUE_N5));
-		assertEquals(5, ArrayUtils.lastIndexOfAny(5, BARRAY.length - 5, BARRAY,
-				BVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(5, BARRAY.length - 5,
-				BARRAY, BVALUE_5));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(BVALUE_N5, BARRAY, 5,
+				BARRAY.length - 5));
+		assertEquals(5, ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 5,
+				BARRAY.length - 5));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY, 5,
+				BARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(10, 1, BARRAY, BVALUE_N5));
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(10, 1, BARRAY, BVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(10, 1, BARRAY, BVALUE_5));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(BVALUE_N5, BARRAY, 10, 1));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 10, 1));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY, 10, 1));
 	}
 
 	/* ############################################################## */
@@ -678,53 +751,125 @@ public class ArrayUtilsTest {
 	/* ############################################################## */
 
 	@Test
-	public void testEqualsCaCa() {
-		assertFalse(ArrayUtils.equals((char[]) null, CARRAY));
-		assertFalse(ArrayUtils.equals(CARRAY, (char[]) null));
-		assertFalse(ArrayUtils.equals(CVALUES_POS, CARRAY));
+	public void testAppendCaCa() {
+		try {
+			ArrayUtils.append((char[]) null, (char[]) null);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 
-		assertTrue(ArrayUtils.equals((char[]) null, (char[]) null));
-		assertTrue(ArrayUtils.equals(CARRAY, CARRAY));
+		try {
+			ArrayUtils.append((char[]) null, CARRAY);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 
-		char[] copy = new char[CARRAY.length];
-		System.arraycopy(CARRAY, 0, copy, 0, CARRAY.length);
+		try {
+			ArrayUtils.append(CARRAY, (char[]) null);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 
-		assertTrue(ArrayUtils.equals(CARRAY, copy));
+		char[] array = new char[0];
+
+		array = ArrayUtils.append(CVALUES_NEG, array);
+		array = ArrayUtils.append(CVALUES_ZERO, array);
+		array = ArrayUtils.append(CVALUES_POS, array);
+
+		assertEquals(CARRAY.length, array.length);
+		assertTrue(ArrayUtils.equals(CARRAY, array));
 	}
 
 	@Test
-	public void testEqualsICaICaI() {
-		assertFalse(ArrayUtils.equals(0, CARRAY, 0, null, CARRAY.length));
-		assertFalse(ArrayUtils.equals(0, null, 0, CARRAY, CARRAY.length));
+	public void testInsertCaCaI() {
+		try {
+			ArrayUtils.insert((char[]) null, (char[]) null, 0);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 
-		assertTrue(ArrayUtils.equals(0, CARRAY, 0, CARRAY, CARRAY.length));
-		assertTrue(ArrayUtils.equals(0, CARRAY, 0, CVALUES_NEG,
-				CVALUES_NEG.length));
-		assertTrue(ArrayUtils.equals(CVALUES_NEG.length + 1, CARRAY, 0,
-				CVALUES_POS, CVALUES_POS.length));
+		try {
+			ArrayUtils.insert((char[]) null, CARRAY, 0);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		try {
+			ArrayUtils.insert(CARRAY, (char[]) null, 0);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		char[] array = new char[0];
+
+		array = ArrayUtils.insert(CVALUES_NEG, array, 0);
+		array = ArrayUtils.insert(CVALUES_ZERO, array, 0);
+		array = ArrayUtils.insert(CVALUES_POS, array, 0);
+
+		assertEquals(CARRAY.length, array.length);
+
+		assertTrue(ArrayUtils.equals(CVALUES_POS, 0, array, 0,
+				CVALUES_POS.length));
+		assertTrue(ArrayUtils.equals(CVALUES_ZERO, 0, array,
+				CVALUES_POS.length, CVALUES_ZERO.length));
+		assertTrue(ArrayUtils.equals(CVALUES_NEG, 0, array, CVALUES_POS.length
+				+ CVALUES_ZERO.length, CVALUES_NEG.length));
 	}
 
 	@Test
 	public void testEnsureCapacityICa() {
 		assertEquals(CARRAY,
-				ArrayUtils.ensureCapacity(CARRAY.length - 1, CARRAY));
-		assertNotSame(CARRAY, ArrayUtils.ensureCapacity(CARRAY.length, CARRAY));
+				ArrayUtils.ensureCapacity(CARRAY, CARRAY.length - 1));
+		assertNotSame(CARRAY, ArrayUtils.ensureCapacity(CARRAY, CARRAY.length));
 
-		char[] array = ArrayUtils.ensureCapacity(CARRAY.length, CARRAY);
+		char[] array = ArrayUtils.ensureCapacity(CARRAY, CARRAY.length);
 		assertEquals(CARRAY.length, array.length);
-		assertTrue(ArrayUtils.equals(0, array, 0, CARRAY, CARRAY.length));
+		assertTrue(ArrayUtils.equals(CARRAY, 0, array, 0, CARRAY.length));
 	}
 
 	@Test
 	public void testEnsureCapacityIFCa() {
 		assertEquals(CARRAY,
-				ArrayUtils.ensureCapacity(CARRAY.length - 1, 2, CARRAY));
+				ArrayUtils.ensureCapacity(CARRAY, CARRAY.length - 1, 2));
 		assertNotSame(CARRAY,
-				ArrayUtils.ensureCapacity(CARRAY.length, 2, CARRAY));
+				ArrayUtils.ensureCapacity(CARRAY, CARRAY.length, 2));
 
-		char[] array = ArrayUtils.ensureCapacity(CARRAY.length, 2, CARRAY);
+		char[] array = ArrayUtils.ensureCapacity(CARRAY, CARRAY.length, 2);
 		assertEquals(CARRAY.length * 2, array.length);
-		assertTrue(ArrayUtils.equals(0, array, 0, CARRAY, CARRAY.length));
+		assertTrue(ArrayUtils.equals(CARRAY, 0, array, 0, CARRAY.length));
+	}
+
+	@Test
+	public void testEqualsCaCa() {
+		assertFalse(ArrayUtils.equals(CARRAY, (char[]) null));
+		assertFalse(ArrayUtils.equals((char[]) null, CARRAY));
+		assertFalse(ArrayUtils.equals(CARRAY, CVALUES_POS));
+	
+		assertTrue(ArrayUtils.equals((char[]) null, (char[]) null));
+		assertTrue(ArrayUtils.equals(CARRAY, CARRAY));
+	
+		char[] copy = new char[CARRAY.length];
+		System.arraycopy(CARRAY, 0, copy, 0, CARRAY.length);
+	
+		assertTrue(ArrayUtils.equals(copy, CARRAY));
+	}
+
+	@Test
+	public void testEqualsICaICaI() {
+		assertFalse(ArrayUtils.equals(null, 0, CARRAY, 0, CARRAY.length));
+		assertFalse(ArrayUtils.equals(CARRAY, 0, null, 0, CARRAY.length));
+	
+		assertTrue(ArrayUtils.equals(CARRAY, 0, CARRAY, 0, CARRAY.length));
+		assertTrue(ArrayUtils.equals(CVALUES_NEG, 0, CARRAY, 0,
+				CVALUES_NEG.length));
+		assertTrue(ArrayUtils.equals(CVALUES_POS, 0, CARRAY,
+				CVALUES_NEG.length + 1, CVALUES_POS.length));
 	}
 
 	/*
@@ -735,87 +880,87 @@ public class ArrayUtilsTest {
 	@Test
 	public void testIndexOfCaC() {
 		try {
-			ArrayUtils.indexOf(null, (char) 0);
+			ArrayUtils.indexOf((char) 0, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.indexOf(CARRAY, '0'));
-		assertEquals(10, ArrayUtils.indexOf(CARRAY, '5'));
+		assertEquals(0, ArrayUtils.indexOf('a', CARRAY));
+		assertEquals(5, ArrayUtils.indexOf('0', CARRAY));
+		assertEquals(10, ArrayUtils.indexOf('5', CARRAY));
 	}
 
 	@Test
 	public void testIndexOfICaC() {
 		try {
-			ArrayUtils.indexOf(0, null, '0');
+			ArrayUtils.indexOf('0', null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(-1, CARRAY, '0');
+			ArrayUtils.indexOf('0', CARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(0, CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.indexOf(0, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.indexOf(0, CARRAY, '5'));
+		assertEquals(0, ArrayUtils.indexOf('a', CARRAY, 0));
+		assertEquals(5, ArrayUtils.indexOf('0', CARRAY, 0));
+		assertEquals(10, ArrayUtils.indexOf('5', CARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.indexOf(5, CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.indexOf(5, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.indexOf(5, CARRAY, '5'));
+		assertEquals(-1, ArrayUtils.indexOf('a', CARRAY, 5));
+		assertEquals(5, ArrayUtils.indexOf('0', CARRAY, 5));
+		assertEquals(10, ArrayUtils.indexOf('5', CARRAY, 5));
 
-		assertEquals(-1, ArrayUtils.indexOf(10, CARRAY, 'a'));
-		assertEquals(-1, ArrayUtils.indexOf(10, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.indexOf(10, CARRAY, '5'));
+		assertEquals(-1, ArrayUtils.indexOf('a', CARRAY, 10));
+		assertEquals(-1, ArrayUtils.indexOf('0', CARRAY, 10));
+		assertEquals(10, ArrayUtils.indexOf('5', CARRAY, 10));
 	}
 
 	@Test
 	public void testIndexOfIICaC() {
 		try {
-			ArrayUtils.indexOf(0, 1, null, '0');
+			ArrayUtils.indexOf('0', null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(-1, 1, CARRAY, '0');
+			ArrayUtils.indexOf('0', CARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(0, -1, CARRAY, '0');
+			ArrayUtils.indexOf('0', CARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(0, CARRAY.length * 2, CARRAY, '0');
+			ArrayUtils.indexOf('0', CARRAY, 0, CARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(0, CARRAY.length, CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.indexOf(0, CARRAY.length, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.indexOf(0, CARRAY.length, CARRAY, '5'));
+		assertEquals(0, ArrayUtils.indexOf('a', CARRAY, 0, CARRAY.length));
+		assertEquals(5, ArrayUtils.indexOf('0', CARRAY, 0, CARRAY.length));
+		assertEquals(10, ArrayUtils.indexOf('5', CARRAY, 0, CARRAY.length));
 
-		assertEquals(-1, ArrayUtils.indexOf(5, CARRAY.length - 5, CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.indexOf(5, CARRAY.length - 5, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.indexOf(5, CARRAY.length - 5, CARRAY, '5'));
+		assertEquals(-1, ArrayUtils.indexOf('a', CARRAY, 5, CARRAY.length - 5));
+		assertEquals(5, ArrayUtils.indexOf('0', CARRAY, 5, CARRAY.length - 5));
+		assertEquals(10, ArrayUtils.indexOf('5', CARRAY, 5, CARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.indexOf(10, 1, CARRAY, 'a'));
-		assertEquals(-1, ArrayUtils.indexOf(10, 1, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.indexOf(10, 1, CARRAY, '5'));
+		assertEquals(-1, ArrayUtils.indexOf('a', CARRAY, 10, 1));
+		assertEquals(-1, ArrayUtils.indexOf('0', CARRAY, 10, 1));
+		assertEquals(10, ArrayUtils.indexOf('5', CARRAY, 10, 1));
 	}
 
 	/*
@@ -826,92 +971,92 @@ public class ArrayUtilsTest {
 	@Test
 	public void testIndexOfCaCa() {
 		try {
-			ArrayUtils.indexOf(null, CVALUES_ZERO);
+			ArrayUtils.indexOf(CVALUES_ZERO, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(CARRAY, CVALUES_NEG));
-		assertEquals(5, ArrayUtils.indexOf(CARRAY, CVALUES_ZERO));
-		assertEquals(6, ArrayUtils.indexOf(CARRAY, CVALUES_POS));
+		assertEquals(0, ArrayUtils.indexOf(CVALUES_NEG, CARRAY));
+		assertEquals(5, ArrayUtils.indexOf(CVALUES_ZERO, CARRAY));
+		assertEquals(6, ArrayUtils.indexOf(CVALUES_POS, CARRAY));
 	}
 
 	@Test
 	public void testIndexOfICaCa() {
 		try {
-			ArrayUtils.indexOf(0, null, CVALUES_ZERO);
+			ArrayUtils.indexOf(CVALUES_ZERO, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(-1, CARRAY, CVALUES_ZERO);
+			ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOf(0, CARRAY, CVALUES_NEG));
-		assertEquals(5, ArrayUtils.indexOf(0, CARRAY, CVALUES_ZERO));
-		assertEquals(6, ArrayUtils.indexOf(0, CARRAY, CVALUES_POS));
+		assertEquals(0, ArrayUtils.indexOf(CVALUES_NEG, CARRAY, 0));
+		assertEquals(5, ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, 0));
+		assertEquals(6, ArrayUtils.indexOf(CVALUES_POS, CARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.indexOf(5, CARRAY, CVALUES_NEG));
-		assertEquals(5, ArrayUtils.indexOf(5, CARRAY, CVALUES_ZERO));
-		assertEquals(6, ArrayUtils.indexOf(6, CARRAY, CVALUES_POS));
+		assertEquals(-1, ArrayUtils.indexOf(CVALUES_NEG, CARRAY, 5));
+		assertEquals(5, ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, 5));
+		assertEquals(6, ArrayUtils.indexOf(CVALUES_POS, CARRAY, 6));
 
-		assertEquals(-1, ArrayUtils.indexOf(6, CARRAY, CVALUES_NEG));
-		assertEquals(-1, ArrayUtils.indexOf(10, CARRAY, CVALUES_ZERO));
+		assertEquals(-1, ArrayUtils.indexOf(CVALUES_NEG, CARRAY, 6));
+		assertEquals(-1, ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, 10));
 	}
 
 	@Test
 	public void testIndexOfIICaCa() {
 		try {
-			ArrayUtils.indexOf(0, 1, null, CVALUES_ZERO);
+			ArrayUtils.indexOf(CVALUES_ZERO, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(-1, 1, CARRAY, CVALUES_ZERO);
+			ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(0, -1, CARRAY, CVALUES_ZERO);
+			ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOf(0, CARRAY.length * 2, CARRAY, CVALUES_ZERO);
+			ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, 0, CARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.indexOf(0, CARRAY.length, CARRAY, CVALUES_NEG));
+				ArrayUtils.indexOf(CVALUES_NEG, CARRAY, 0, CARRAY.length));
 		assertEquals(5,
-				ArrayUtils.indexOf(0, CARRAY.length, CARRAY, CVALUES_ZERO));
+				ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, 0, CARRAY.length));
 		assertEquals(6,
-				ArrayUtils.indexOf(0, CARRAY.length, CARRAY, CVALUES_POS));
+				ArrayUtils.indexOf(CVALUES_POS, CARRAY, 0, CARRAY.length));
 
 		assertEquals(-1,
-				ArrayUtils.indexOf(5, CARRAY.length - 5, CARRAY, CVALUES_NEG));
+				ArrayUtils.indexOf(CVALUES_NEG, CARRAY, 5, CARRAY.length - 5));
 		assertEquals(5,
-				ArrayUtils.indexOf(5, CARRAY.length - 5, CARRAY, CVALUES_ZERO));
+				ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, 5, CARRAY.length - 5));
 		assertEquals(6,
-				ArrayUtils.indexOf(5, CARRAY.length - 5, CARRAY, CVALUES_POS));
+				ArrayUtils.indexOf(CVALUES_POS, CARRAY, 5, CARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.indexOf(6, 5, CARRAY, CVALUES_NEG));
-		assertEquals(5, ArrayUtils.indexOf(5, 1, CARRAY, CVALUES_ZERO));
-		assertEquals(-1, ArrayUtils.indexOf(2, 5, CARRAY, CVALUES_POS));
+		assertEquals(-1, ArrayUtils.indexOf(CVALUES_NEG, CARRAY, 6, 5));
+		assertEquals(5, ArrayUtils.indexOf(CVALUES_ZERO, CARRAY, 5, 1));
+		assertEquals(-1, ArrayUtils.indexOf(CVALUES_POS, CARRAY, 2, 5));
 	}
 
 	/*
@@ -922,93 +1067,93 @@ public class ArrayUtilsTest {
 	@Test
 	public void testIndexOfAnyCaCa() {
 		try {
-			ArrayUtils.indexOfAny(null, CVALUE_0);
+			ArrayUtils.indexOfAny(CVALUE_0, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOfAny(CARRAY, CVALUE_N5));
-		assertEquals(5, ArrayUtils.indexOfAny(CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(CARRAY, CVALUE_5));
+		assertEquals(0, ArrayUtils.indexOfAny(CVALUE_N5, CARRAY));
+		assertEquals(5, ArrayUtils.indexOfAny(CVALUE_0, CARRAY));
+		assertEquals(10, ArrayUtils.indexOfAny(CVALUE_5, CARRAY));
 	}
 
 	@Test
 	public void testIndexOfAnyICaCa() {
 		try {
-			ArrayUtils.indexOfAny(0, null, CVALUE_0);
+			ArrayUtils.indexOfAny(CVALUE_0, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOfAny(-1, CARRAY, CVALUE_0);
+			ArrayUtils.indexOfAny(CVALUE_0, CARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.indexOfAny(0, CARRAY, CVALUE_N5));
-		assertEquals(5, ArrayUtils.indexOfAny(0, CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(0, CARRAY, CVALUE_5));
+		assertEquals(0, ArrayUtils.indexOfAny(CVALUE_N5, CARRAY, 0));
+		assertEquals(5, ArrayUtils.indexOfAny(CVALUE_0, CARRAY, 0));
+		assertEquals(10, ArrayUtils.indexOfAny(CVALUE_5, CARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.indexOfAny(5, CARRAY, CVALUE_N5));
-		assertEquals(5, ArrayUtils.indexOfAny(5, CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(5, CARRAY, CVALUE_5));
+		assertEquals(-1, ArrayUtils.indexOfAny(CVALUE_N5, CARRAY, 5));
+		assertEquals(5, ArrayUtils.indexOfAny(CVALUE_0, CARRAY, 5));
+		assertEquals(10, ArrayUtils.indexOfAny(CVALUE_5, CARRAY, 5));
 
-		assertEquals(-1, ArrayUtils.indexOfAny(10, CARRAY, CVALUE_N5));
-		assertEquals(-1, ArrayUtils.indexOfAny(10, CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(10, CARRAY, CVALUE_5));
+		assertEquals(-1, ArrayUtils.indexOfAny(CVALUE_N5, CARRAY, 10));
+		assertEquals(-1, ArrayUtils.indexOfAny(CVALUE_0, CARRAY, 10));
+		assertEquals(10, ArrayUtils.indexOfAny(CVALUE_5, CARRAY, 10));
 	}
 
 	@Test
 	public void testIndexOfAnyIICaCa() {
 		try {
-			ArrayUtils.indexOfAny(0, 1, null, CVALUE_0);
+			ArrayUtils.indexOfAny(CVALUE_0, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOfAny(-1, 1, CARRAY, CVALUE_0);
+			ArrayUtils.indexOfAny(CVALUE_0, CARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOfAny(0, -1, CARRAY, CVALUE_0);
+			ArrayUtils.indexOfAny(CVALUE_0, CARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.indexOfAny(0, CARRAY.length * 2, CARRAY, CVALUE_0);
+			ArrayUtils.indexOfAny(CVALUE_0, CARRAY, 0, CARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.indexOfAny(0, CARRAY.length, CARRAY, CVALUE_N5));
+				ArrayUtils.indexOfAny(CVALUE_N5, CARRAY, 0, CARRAY.length));
 		assertEquals(5,
-				ArrayUtils.indexOfAny(0, CARRAY.length, CARRAY, CVALUE_0));
+				ArrayUtils.indexOfAny(CVALUE_0, CARRAY, 0, CARRAY.length));
 		assertEquals(10,
-				ArrayUtils.indexOfAny(0, CARRAY.length, CARRAY, CVALUE_5));
+				ArrayUtils.indexOfAny(CVALUE_5, CARRAY, 0, CARRAY.length));
 
 		assertEquals(-1,
-				ArrayUtils.indexOfAny(5, CARRAY.length - 5, CARRAY, CVALUE_N5));
+				ArrayUtils.indexOfAny(CVALUE_N5, CARRAY, 5, CARRAY.length - 5));
 		assertEquals(5,
-				ArrayUtils.indexOfAny(5, CARRAY.length - 5, CARRAY, CVALUE_0));
+				ArrayUtils.indexOfAny(CVALUE_0, CARRAY, 5, CARRAY.length - 5));
 		assertEquals(10,
-				ArrayUtils.indexOfAny(5, CARRAY.length - 5, CARRAY, CVALUE_5));
+				ArrayUtils.indexOfAny(CVALUE_5, CARRAY, 5, CARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.indexOfAny(10, 1, CARRAY, CVALUE_N5));
-		assertEquals(-1, ArrayUtils.indexOfAny(10, 1, CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.indexOfAny(10, 1, CARRAY, CVALUE_5));
+		assertEquals(-1, ArrayUtils.indexOfAny(CVALUE_N5, CARRAY, 10, 1));
+		assertEquals(-1, ArrayUtils.indexOfAny(CVALUE_0, CARRAY, 10, 1));
+		assertEquals(10, ArrayUtils.indexOfAny(CVALUE_5, CARRAY, 10, 1));
 	}
 
 	/*
@@ -1019,90 +1164,90 @@ public class ArrayUtilsTest {
 	@Test
 	public void testLastIndexOfCaC() {
 		try {
-			ArrayUtils.lastIndexOf(null, '0');
+			ArrayUtils.lastIndexOf('0', null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.lastIndexOf(CARRAY, '0'));
-		assertEquals(10, ArrayUtils.lastIndexOf(CARRAY, '5'));
+		assertEquals(0, ArrayUtils.lastIndexOf('a', CARRAY));
+		assertEquals(5, ArrayUtils.lastIndexOf('0', CARRAY));
+		assertEquals(10, ArrayUtils.lastIndexOf('5', CARRAY));
 	}
 
 	@Test
 	public void testLastIndexOfICaC() {
 		try {
-			ArrayUtils.lastIndexOf(0, null, '0');
+			ArrayUtils.lastIndexOf('0', null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(-1, CARRAY, '0');
+			ArrayUtils.lastIndexOf('0', CARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(0, CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.lastIndexOf(0, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.lastIndexOf(0, CARRAY, '5'));
+		assertEquals(0, ArrayUtils.lastIndexOf('a', CARRAY, 0));
+		assertEquals(5, ArrayUtils.lastIndexOf('0', CARRAY, 0));
+		assertEquals(10, ArrayUtils.lastIndexOf('5', CARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(5, CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.lastIndexOf(5, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.lastIndexOf(5, CARRAY, '5'));
+		assertEquals(-1, ArrayUtils.lastIndexOf('a', CARRAY, 5));
+		assertEquals(5, ArrayUtils.lastIndexOf('0', CARRAY, 5));
+		assertEquals(10, ArrayUtils.lastIndexOf('5', CARRAY, 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, CARRAY, 'a'));
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.lastIndexOf(10, CARRAY, '5'));
+		assertEquals(-1, ArrayUtils.lastIndexOf('a', CARRAY, 10));
+		assertEquals(-1, ArrayUtils.lastIndexOf('0', CARRAY, 10));
+		assertEquals(10, ArrayUtils.lastIndexOf('5', CARRAY, 10));
 	}
 
 	@Test
 	public void testLastIndexOfIICaC() {
 		try {
-			ArrayUtils.lastIndexOf(0, 1, null, '0');
+			ArrayUtils.lastIndexOf('0', null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(-1, 1, CARRAY, '0');
+			ArrayUtils.lastIndexOf('0', CARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(0, -1, CARRAY, '0');
+			ArrayUtils.lastIndexOf('0', CARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(0, CARRAY.length * 2, CARRAY, '0');
+			ArrayUtils.lastIndexOf('0', CARRAY, 0, CARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(0, CARRAY.length, CARRAY, 'a'));
-		assertEquals(5, ArrayUtils.lastIndexOf(0, CARRAY.length, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.lastIndexOf(0, CARRAY.length, CARRAY, '5'));
+		assertEquals(0, ArrayUtils.lastIndexOf('a', CARRAY, 0, CARRAY.length));
+		assertEquals(5, ArrayUtils.lastIndexOf('0', CARRAY, 0, CARRAY.length));
+		assertEquals(10, ArrayUtils.lastIndexOf('5', CARRAY, 0, CARRAY.length));
 
 		assertEquals(-1,
-				ArrayUtils.lastIndexOf(5, CARRAY.length - 5, CARRAY, 'a'));
+				ArrayUtils.lastIndexOf('a', CARRAY, 5, CARRAY.length - 5));
 		assertEquals(5,
-				ArrayUtils.lastIndexOf(5, CARRAY.length - 5, CARRAY, '0'));
+				ArrayUtils.lastIndexOf('0', CARRAY, 5, CARRAY.length - 5));
 		assertEquals(10,
-				ArrayUtils.lastIndexOf(5, CARRAY.length - 5, CARRAY, '5'));
+				ArrayUtils.lastIndexOf('5', CARRAY, 5, CARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, 1, CARRAY, 'a'));
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, 1, CARRAY, '0'));
-		assertEquals(10, ArrayUtils.lastIndexOf(10, 1, CARRAY, '5'));
+		assertEquals(-1, ArrayUtils.lastIndexOf('a', CARRAY, 10, 1));
+		assertEquals(-1, ArrayUtils.lastIndexOf('0', CARRAY, 10, 1));
+		assertEquals(10, ArrayUtils.lastIndexOf('5', CARRAY, 10, 1));
 	}
 
 	/*
@@ -1113,92 +1258,92 @@ public class ArrayUtilsTest {
 	@Test
 	public void testLastIndexOfCaCa() {
 		try {
-			ArrayUtils.lastIndexOf(null, CVALUES_ZERO);
+			ArrayUtils.lastIndexOf(CVALUES_ZERO, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(CARRAY, CVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(CARRAY, CVALUES_ZERO));
-		assertEquals(6, ArrayUtils.lastIndexOf(CARRAY, CVALUES_POS));
+		assertEquals(0, ArrayUtils.lastIndexOf(CVALUES_NEG, CARRAY));
+		assertEquals(5, ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY));
+		assertEquals(6, ArrayUtils.lastIndexOf(CVALUES_POS, CARRAY));
 	}
 
 	@Test
 	public void testLastIndexOfICaCa() {
 		try {
-			ArrayUtils.lastIndexOf(0, null, CVALUES_ZERO);
+			ArrayUtils.lastIndexOf(CVALUES_ZERO, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(-1, CARRAY, CVALUES_ZERO);
+			ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOf(0, CARRAY, CVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(0, CARRAY, CVALUES_ZERO));
-		assertEquals(6, ArrayUtils.lastIndexOf(0, CARRAY, CVALUES_POS));
+		assertEquals(0, ArrayUtils.lastIndexOf(CVALUES_NEG, CARRAY, 0));
+		assertEquals(5, ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, 0));
+		assertEquals(6, ArrayUtils.lastIndexOf(CVALUES_POS, CARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(5, CARRAY, CVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(5, CARRAY, CVALUES_ZERO));
-		assertEquals(6, ArrayUtils.lastIndexOf(6, CARRAY, CVALUES_POS));
+		assertEquals(-1, ArrayUtils.lastIndexOf(CVALUES_NEG, CARRAY, 5));
+		assertEquals(5, ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, 5));
+		assertEquals(6, ArrayUtils.lastIndexOf(CVALUES_POS, CARRAY, 6));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(6, CARRAY, CVALUES_NEG));
-		assertEquals(-1, ArrayUtils.lastIndexOf(10, CARRAY, CVALUES_ZERO));
+		assertEquals(-1, ArrayUtils.lastIndexOf(CVALUES_NEG, CARRAY, 6));
+		assertEquals(-1, ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, 10));
 	}
 
 	@Test
 	public void testLastIndexOfIICaCa() {
 		try {
-			ArrayUtils.lastIndexOf(0, 1, null, CVALUES_ZERO);
+			ArrayUtils.lastIndexOf(CVALUES_ZERO, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(-1, 1, CARRAY, CVALUES_ZERO);
+			ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(0, -1, CARRAY, CVALUES_ZERO);
+			ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOf(0, CARRAY.length * 2, CARRAY, CVALUES_ZERO);
+			ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, 0, CARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.lastIndexOf(0, CARRAY.length, CARRAY, CVALUES_NEG));
+				ArrayUtils.lastIndexOf(CVALUES_NEG, CARRAY, 0, CARRAY.length));
 		assertEquals(5,
-				ArrayUtils.lastIndexOf(0, CARRAY.length, CARRAY, CVALUES_ZERO));
+				ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, 0, CARRAY.length));
 		assertEquals(6,
-				ArrayUtils.lastIndexOf(0, CARRAY.length, CARRAY, CVALUES_POS));
+				ArrayUtils.lastIndexOf(CVALUES_POS, CARRAY, 0, CARRAY.length));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(5, CARRAY.length - 5, CARRAY,
-				CVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(5, CARRAY.length - 5, CARRAY,
-				CVALUES_ZERO));
-		assertEquals(6, ArrayUtils.lastIndexOf(5, CARRAY.length - 5, CARRAY,
-				CVALUES_POS));
+		assertEquals(-1, ArrayUtils.lastIndexOf(CVALUES_NEG, CARRAY, 5,
+				CARRAY.length - 5));
+		assertEquals(5, ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, 5,
+				CARRAY.length - 5));
+		assertEquals(6, ArrayUtils.lastIndexOf(CVALUES_POS, CARRAY, 5,
+				CARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOf(6, 5, CARRAY, CVALUES_NEG));
-		assertEquals(5, ArrayUtils.lastIndexOf(5, 1, CARRAY, CVALUES_ZERO));
-		assertEquals(-1, ArrayUtils.lastIndexOf(2, 5, CARRAY, CVALUES_POS));
+		assertEquals(-1, ArrayUtils.lastIndexOf(CVALUES_NEG, CARRAY, 6, 5));
+		assertEquals(5, ArrayUtils.lastIndexOf(CVALUES_ZERO, CARRAY, 5, 1));
+		assertEquals(-1, ArrayUtils.lastIndexOf(CVALUES_POS, CARRAY, 2, 5));
 	}
 
 	/*
@@ -1209,92 +1354,92 @@ public class ArrayUtilsTest {
 	@Test
 	public void testLastIndexOfAnyCaCa() {
 		try {
-			ArrayUtils.lastIndexOfAny(null, CVALUE_0);
+			ArrayUtils.lastIndexOfAny(CVALUE_0, null);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOfAny(CARRAY, CVALUE_N5));
-		assertEquals(5, ArrayUtils.lastIndexOfAny(CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(CARRAY, CVALUE_5));
+		assertEquals(0, ArrayUtils.lastIndexOfAny(CVALUE_N5, CARRAY));
+		assertEquals(5, ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY));
 	}
 
 	@Test
 	public void testLastIndexOfAnyICaCa() {
 		try {
-			ArrayUtils.lastIndexOfAny(0, null, CVALUE_0);
+			ArrayUtils.lastIndexOfAny(CVALUE_0, null, 0);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOfAny(-1, CARRAY, CVALUE_0);
+			ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
-		assertEquals(0, ArrayUtils.lastIndexOfAny(0, CARRAY, CVALUE_N5));
-		assertEquals(5, ArrayUtils.lastIndexOfAny(0, CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(0, CARRAY, CVALUE_5));
+		assertEquals(0, ArrayUtils.lastIndexOfAny(CVALUE_N5, CARRAY, 0));
+		assertEquals(5, ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 0));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 0));
 
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(5, CARRAY, CVALUE_N5));
-		assertEquals(5, ArrayUtils.lastIndexOfAny(5, CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(5, CARRAY, CVALUE_5));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(CVALUE_N5, CARRAY, 5));
+		assertEquals(5, ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 5));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(10, CARRAY, CVALUE_N5));
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(10, CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(10, CARRAY, CVALUE_5));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(CVALUE_N5, CARRAY, 10));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 10));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 10));
 	}
 
 	@Test
 	public void testLastIndexOfAnyIICaCa() {
 		try {
-			ArrayUtils.lastIndexOfAny(0, 1, null, CVALUE_0);
+			ArrayUtils.lastIndexOfAny(CVALUE_0, null, 0, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOfAny(-1, 1, CARRAY, CVALUE_0);
+			ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, -1, 1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOfAny(0, -1, CARRAY, CVALUE_0);
+			ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 0, -1);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		try {
-			ArrayUtils.lastIndexOfAny(0, CARRAY.length * 2, CARRAY, CVALUE_0);
+			ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 0, CARRAY.length * 2);
 			assertTrue(false); // shouldn't get here
 		} catch (Exception e) {
 			assertTrue(true);
 		}
 
 		assertEquals(0,
-				ArrayUtils.lastIndexOfAny(0, CARRAY.length, CARRAY, CVALUE_N5));
+				ArrayUtils.lastIndexOfAny(CVALUE_N5, CARRAY, 0, CARRAY.length));
 		assertEquals(5,
-				ArrayUtils.lastIndexOfAny(0, CARRAY.length, CARRAY, CVALUE_0));
+				ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 0, CARRAY.length));
 		assertEquals(10,
-				ArrayUtils.lastIndexOfAny(0, CARRAY.length, CARRAY, CVALUE_5));
+				ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 0, CARRAY.length));
 
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(5, CARRAY.length - 5,
-				CARRAY, CVALUE_N5));
-		assertEquals(5, ArrayUtils.lastIndexOfAny(5, CARRAY.length - 5, CARRAY,
-				CVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(5, CARRAY.length - 5,
-				CARRAY, CVALUE_5));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(CVALUE_N5, CARRAY, 5,
+				CARRAY.length - 5));
+		assertEquals(5, ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 5,
+				CARRAY.length - 5));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 5,
+				CARRAY.length - 5));
 
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(10, 1, CARRAY, CVALUE_N5));
-		assertEquals(-1, ArrayUtils.lastIndexOfAny(10, 1, CARRAY, CVALUE_0));
-		assertEquals(10, ArrayUtils.lastIndexOfAny(10, 1, CARRAY, CVALUE_5));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(CVALUE_N5, CARRAY, 10, 1));
+		assertEquals(-1, ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 10, 1));
+		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 10, 1));
 	}
 }

@@ -35,12 +35,12 @@ public class NumberUtils {
 	 * object-creation during parsing and only allocating a few primitives for
 	 * state-tracking.
 	 * 
+	 * @param data
+	 *            The array to parse the number from.
 	 * @param index
 	 *            The index into the array where parsing will begin from.
 	 * @param length
 	 *            The number of bytes to parse to construct the final value.
-	 * @param data
-	 *            The array to parse the number from.
 	 * 
 	 * @return a <code>byte</code> numeric value as parsed from the given array.
 	 * 
@@ -56,9 +56,9 @@ public class NumberUtils {
 	 *             beyond the limits of {@link Byte#MAX_VALUE} or
 	 *             {@link Byte#MIN_VALUE}.
 	 */
-	public static byte parseByte(int index, int length, byte[] data)
+	public static byte parseByte(byte[] data, int index, int length)
 			throws IllegalArgumentException, NumberFormatException {
-		return (byte) parseLong(index, length, data, Byte.MIN_VALUE,
+		return (byte) parseLong(data, index, length, Byte.MIN_VALUE,
 				Byte.MAX_VALUE);
 	}
 
@@ -81,12 +81,12 @@ public class NumberUtils {
 	 * object-creation during parsing and only allocating a few primitives for
 	 * state-tracking.
 	 * 
+	 * @param data
+	 *            The array to parse the number from.
 	 * @param index
 	 *            The index into the array where parsing will begin from.
 	 * @param length
 	 *            The number of bytes to parse to construct the final value.
-	 * @param data
-	 *            The array to parse the number from.
 	 * 
 	 * @return a <code>short</code> value as parsed from the given array.
 	 * 
@@ -102,9 +102,9 @@ public class NumberUtils {
 	 *             beyond the limits of {@link Short#MAX_VALUE} or
 	 *             {@link Short#MIN_VALUE}.
 	 */
-	public static short parseShort(int index, int length, byte[] data)
+	public static short parseShort(byte[] data, int index, int length)
 			throws IllegalArgumentException, NumberFormatException {
-		return (short) parseLong(index, length, data, Short.MIN_VALUE,
+		return (short) parseLong(data, index, length, Short.MIN_VALUE,
 				Short.MAX_VALUE);
 	}
 
@@ -127,12 +127,12 @@ public class NumberUtils {
 	 * object-creation during parsing and only allocating a few primitives for
 	 * state-tracking.
 	 * 
+	 * @param data
+	 *            The array to parse the number from.
 	 * @param index
 	 *            The index into the array where parsing will begin from.
 	 * @param length
 	 *            The number of bytes to parse to construct the final value.
-	 * @param data
-	 *            The array to parse the number from.
 	 * 
 	 * @return an <code>integer</code> value as parsed from the given array.
 	 * 
@@ -148,9 +148,9 @@ public class NumberUtils {
 	 *             beyond the limits of {@link Integer#MAX_VALUE} or
 	 *             {@link Integer#MIN_VALUE}.
 	 */
-	public static int parseInt(int index, int length, byte[] data)
+	public static int parseInt(byte[] data, int index, int length)
 			throws IllegalArgumentException, NumberFormatException {
-		return (int) parseLong(index, length, data, Integer.MIN_VALUE,
+		return (int) parseLong(data, index, length, Integer.MIN_VALUE,
 				Integer.MAX_VALUE);
 	}
 
@@ -172,12 +172,12 @@ public class NumberUtils {
 	 * object-creation during parsing and only allocating a few primitives for
 	 * state-tracking.
 	 * 
+	 * @param data
+	 *            The array to parse the number from.
 	 * @param index
 	 *            The index into the array where parsing will begin from.
 	 * @param length
 	 *            The number of bytes to parse to construct the final value.
-	 * @param data
-	 *            The array to parse the number from.
 	 * 
 	 * @return a <code>long</code> value as parsed from the given array.
 	 * 
@@ -193,12 +193,12 @@ public class NumberUtils {
 	 *             beyond the limits of {@link Long#MAX_VALUE} or
 	 *             {@link Long#MIN_VALUE}.
 	 */
-	public static long parseLong(int index, int length, byte[] data)
+	public static long parseLong(byte[] data, int index, int length)
 			throws IllegalArgumentException, NumberFormatException {
-		return parseLong(index, length, data, Long.MIN_VALUE, Long.MAX_VALUE);
+		return parseLong(data, index, length, Long.MIN_VALUE, Long.MAX_VALUE);
 	}
 
-	protected static long parseLong(int index, int length, byte[] data,
+	protected static long parseLong(byte[] data, int index, int length,
 			long minValue, long maxValue) throws IllegalArgumentException,
 			NumberFormatException {
 		if (data == null || data.length == 0)

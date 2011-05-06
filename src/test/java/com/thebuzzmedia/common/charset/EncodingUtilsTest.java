@@ -109,14 +109,14 @@ public class EncodingUtilsTest {
 
 	@Test
 	public void testEncodeIIBa() {
-		byte[] ascii = EncodingUtils.encode(0, asciiLength, ASCII_DATA);
+		byte[] ascii = EncodingUtils.encode(ASCII_DATA, 0, asciiLength);
 
 		assertEquals(asciiChecksumLength, ascii.length);
 
 		for (int i = 0; i < ascii.length; i++)
 			assertEquals(ASCII_CHECKSUM[i], ascii[i]);
 
-		byte[] utf8 = EncodingUtils.encode(0, utf8Length, UTF8_DATA);
+		byte[] utf8 = EncodingUtils.encode(UTF8_DATA, 0, utf8Length);
 
 		// At least as long as original chars.
 		assertTrue(utf8.length >= utf8Length);
@@ -128,16 +128,16 @@ public class EncodingUtilsTest {
 
 	@Test
 	public void testEncodeIIBaCs() {
-		byte[] ascii = EncodingUtils.encode(0, asciiLength, ASCII_DATA,
-				Charset.forName("ASCII"));
+		byte[] ascii = EncodingUtils.encode(ASCII_DATA,
+				Charset.forName("ASCII"), 0, asciiLength);
 
 		assertEquals(asciiChecksumLength, ascii.length);
 
 		for (int i = 0; i < ascii.length; i++)
 			assertEquals(ASCII_CHECKSUM[i], ascii[i]);
 
-		byte[] utf8 = EncodingUtils.encode(0, utf8Length, UTF8_DATA,
-				Charset.forName("UTF-8"));
+		byte[] utf8 = EncodingUtils.encode(UTF8_DATA, Charset.forName("UTF-8"),
+				0, utf8Length);
 
 		// At least as long as original chars.
 		assertTrue(utf8.length >= utf8Length);

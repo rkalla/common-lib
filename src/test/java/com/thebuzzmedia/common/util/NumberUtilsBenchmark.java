@@ -95,7 +95,7 @@ public class NumberUtilsBenchmark {
 		long time = System.currentTimeMillis();
 		for (int loop = 0; loop < ITERS; loop++) {
 			for (int i = 0; i < length; i += 7) {
-				NumberUtils.parseInt(i, 5, DATA);
+				NumberUtils.parseInt(DATA, i, 5);
 			}
 		}
 		System.out.println("common-lib NumberUtils.parseInt elapsed time: "

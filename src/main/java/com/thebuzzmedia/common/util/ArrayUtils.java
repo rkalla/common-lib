@@ -15,7 +15,9 @@
  */
 package com.thebuzzmedia.common.util;
 
-// TODO: Add equals methods that accept index and offsets to do comparisons
+// TODO: add indexNOTof methods.
+// TODO: Add method that copies array A into array B (resizing if necessary) and returns result.
+// basically makes appending/inserting into an array easier.
 public class ArrayUtils {
 	public static final int INVALID_INDEX = -1;
 
@@ -32,61 +34,47 @@ public class ArrayUtils {
 	 * ########################################################################
 	 * ========================================================================
 	 */
-
-	public static boolean equals(byte[] source, byte[] values) {
-		// Short-circuit in simple cases.
-		if ((source == values) || (source == null && values == null))
-			return true;
-		else if ((source == null && values != null)
-				|| (source != null && values == null))
-			return false;
-		else if (source.length != values.length)
-			return false;
-
-		return equals(0, source, 0, values, values.length);
-	}
-
-	public static boolean equals(int sourceIndex, byte[] source,
-			int valuesIndex, byte[] values, int length)
+	public static byte[] append(byte[] values, byte[] array)
 			throws IllegalArgumentException {
-		// Short-circuit in simple cases.
-		if (source == values)
-			return true;
-		else if ((source == null && values != null)
-				|| (source != null && values == null))
-			return false;
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
 
-		/*
-		 * Check all the arguments. Seems lengthy, but it's fast and allows the
-		 * code below it to be simpler. We have to do these sanity checks at
-		 * SOME regardless.
-		 */
-		if (sourceIndex < 0 || valuesIndex < 0 || length < 0
-				|| (sourceIndex + length) > source.length
-				|| (valuesIndex + length) > values.length)
-			throw new IllegalArgumentException("sourceIndex [" + sourceIndex
-					+ "] and valuesIndex [" + valuesIndex
-					+ "] must be >= 0. length [" + length
-					+ "] must be >= 0. (sourceIndex + length) ["
-					+ (sourceIndex + length) + "] must be <= source.length ["
-					+ source.length + "]. (valuesIndex + length) ["
-					+ (valuesIndex + length) + "]  must be <= values.length ["
-					+ values.length + "].");
-
-		for (int i = 0; i < length; i++) {
-			if (source[sourceIndex + i] != values[valuesIndex + i])
-				return false;
-		}
-
-		return true;
+		return insert(values, array, array.length);
 	}
 
-	public static byte[] ensureCapacity(int capacity, byte[] array) {
-		return ensureCapacity(capacity, 1, array);
+	public static byte[] insert(byte[] values, byte[] array, int index)
+			throws IllegalArgumentException {
+		if (values == null || array == null)
+			throw new IllegalArgumentException(
+					"Neither values or array can be null.");
+		if (index < 0 || index > array.length)
+			throw new IllegalArgumentException("index [" + index
+					+ "] must be >= 0 and <= array.length [" + array.length
+					+ "]");
+
+		// Remember the array's original length
+		int originalLength = array.length;
+
+		// Ensure the final size of the array
+		array = ensureCapacity(array, array.length + values.length);
+
+		// Move contents down to make room if this is an insert.
+		if (index < array.length)
+			System.arraycopy(array, index, array, index + values.length,
+					originalLength - index);
+
+		// Copy the values into the resulting array
+		System.arraycopy(values, 0, array, index, values.length);
+
+		return array;
 	}
 
-	public static byte[] ensureCapacity(int capacity, float growthFactor,
-			byte[] array) {
+	public static byte[] ensureCapacity(byte[] array, int capacity) {
+		return ensureCapacity(array, capacity, 1);
+	}
+
+	public static byte[] ensureCapacity(byte[] array, int capacity,
+			float growthFactor) {
 		if (capacity < array.length)
 			return array;
 
@@ -103,28 +91,75 @@ public class ArrayUtils {
 		return newArray;
 	}
 
+	public static boolean equals(byte[] values, byte[] array) {
+		// Short-circuit in simple cases.
+		if ((array == values) || (array == null && values == null))
+			return true;
+		else if ((array == null && values != null)
+				|| (array != null && values == null))
+			return false;
+		else if (array.length != values.length)
+			return false;
+
+		return equals(values, 0, array, 0, values.length);
+	}
+
+	public static boolean equals(byte[] values, int valuesIndex, byte[] array,
+			int arrayIndex, int length) throws IllegalArgumentException {
+		// Short-circuit in simple cases.
+		if (array == values)
+			return true;
+		else if ((array == null && values != null)
+				|| (array != null && values == null))
+			return false;
+
+		/*
+		 * Check all the arguments. Seems lengthy, but it's fast and allows the
+		 * code below it to be simpler. We have to do these sanity checks at
+		 * SOME regardless.
+		 */
+		if (arrayIndex < 0 || valuesIndex < 0 || length < 0
+				|| (arrayIndex + length) > array.length
+				|| (valuesIndex + length) > values.length)
+			throw new IllegalArgumentException("sourceIndex [" + arrayIndex
+					+ "] and valuesIndex [" + valuesIndex
+					+ "] must be >= 0. length [" + length
+					+ "] must be >= 0. (sourceIndex + length) ["
+					+ (arrayIndex + length) + "] must be <= source.length ["
+					+ array.length + "]. (valuesIndex + length) ["
+					+ (valuesIndex + length) + "]  must be <= values.length ["
+					+ values.length + "].");
+
+		for (int i = 0; i < length; i++) {
+			if (array[arrayIndex + i] != values[valuesIndex + i])
+				return false;
+		}
+
+		return true;
+	}
+
 	/*
 	 * ========================================================================
 	 * byte[] array, byte value
 	 * ========================================================================
 	 */
-	public static int indexOf(byte[] array, byte value)
+	public static int indexOf(byte value, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(0, array.length, array, value);
+		return indexOf(value, array, 0, array.length);
 	}
 
-	public static int indexOf(int index, byte[] array, byte value)
+	public static int indexOf(byte value, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(index, array.length - index, array, value);
+		return indexOf(value, array, index, array.length - index);
 	}
 
-	public static int indexOf(int index, int length, byte[] array, byte value)
+	public static int indexOf(byte value, byte[] array, int index, int length)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
@@ -147,23 +182,23 @@ public class ArrayUtils {
 	 * byte[] array, byte[] values
 	 * ========================================================================
 	 */
-	public static int indexOf(byte[] array, byte[] values)
+	public static int indexOf(byte[] values, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(0, array.length, array, values);
+		return indexOf(values, array, 0, array.length);
 	}
 
-	public static int indexOf(int index, byte[] array, byte[] values)
+	public static int indexOf(byte[] values, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(index, array.length - index, array, values);
+		return indexOf(values, array, index, array.length - index);
 	}
 
-	public static int indexOf(int index, int length, byte[] array, byte[] values)
+	public static int indexOf(byte[] values, byte[] array, int index, int length)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
@@ -202,24 +237,24 @@ public class ArrayUtils {
 	 * byte[] array, ANY byte[] values
 	 * ========================================================================
 	 */
-	public static int indexOfAny(byte[] array, byte[] values)
+	public static int indexOfAny(byte[] values, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOfAny(0, array.length, array, values);
+		return indexOfAny(values, array, 0, array.length);
 	}
 
-	public static int indexOfAny(int index, byte[] array, byte[] values)
+	public static int indexOfAny(byte[] values, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOfAny(index, array.length - index, array, values);
+		return indexOfAny(values, array, index, array.length - index);
 	}
 
-	public static int indexOfAny(int index, int length, byte[] array,
-			byte[] values) throws IllegalArgumentException {
+	public static int indexOfAny(byte[] values, byte[] array, int index,
+			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 		if (values == null)
@@ -245,29 +280,39 @@ public class ArrayUtils {
 		return INVALID_INDEX;
 	}
 
+	// TODO: Is naming good/clear?
+	public static int indexAfter(byte value, byte[] array) {
+	}
+	
+	public static int indexAfter(byte value, byte[] array, int index) {
+	}
+	
+	public static int indexAfter(byte value, byte[] array, int index, int length) {
+	}
+	
 	/*
 	 * ========================================================================
 	 * REVERSE byte[] array, byte value
 	 * ========================================================================
 	 */
-	public static int lastIndexOf(byte[] array, byte value)
+	public static int lastIndexOf(byte value, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOf(0, array.length, array, value);
+		return lastIndexOf(value, array, 0, array.length);
 	}
 
-	public static int lastIndexOf(int index, byte[] array, byte value)
+	public static int lastIndexOf(byte value, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(index, array.length - index, array, value);
+		return indexOf(value, array, index, array.length - index);
 	}
 
-	public static int lastIndexOf(int index, int length, byte[] array,
-			byte value) throws IllegalArgumentException {
+	public static int lastIndexOf(byte value, byte[] array, int index,
+			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 		if (index < 0 || length < 0 || (index + length) > array.length)
@@ -289,24 +334,24 @@ public class ArrayUtils {
 	 * REVERSE byte[] array, byte[] values
 	 * ========================================================================
 	 */
-	public static int lastIndexOf(byte[] array, byte[] values)
+	public static int lastIndexOf(byte[] values, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOf(0, array.length, array, values);
+		return lastIndexOf(values, array, 0, array.length);
 	}
 
-	public static int lastIndexOf(int index, byte[] array, byte[] values)
+	public static int lastIndexOf(byte[] values, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOf(index, array.length - index, array, values);
+		return lastIndexOf(values, array, index, array.length - index);
 	}
 
-	public static int lastIndexOf(int index, int length, byte[] array,
-			byte[] values) throws IllegalArgumentException {
+	public static int lastIndexOf(byte[] values, byte[] array, int index,
+			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 		if (values == null)
@@ -345,24 +390,24 @@ public class ArrayUtils {
 	 * REVERSE byte[] array, ANY byte[] values
 	 * ========================================================================
 	 */
-	public static int lastIndexOfAny(byte[] array, byte[] values)
+	public static int lastIndexOfAny(byte[] values, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOfAny(0, array.length, array, values);
+		return lastIndexOfAny(values, array, 0, array.length);
 	}
 
-	public static int lastIndexOfAny(int index, byte[] array, byte[] values)
+	public static int lastIndexOfAny(byte[] values, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOfAny(index, array.length - index, array, values);
+		return lastIndexOfAny(values, array, index, array.length - index);
 	}
 
-	public static int lastIndexOfAny(int index, int length, byte[] array,
-			byte[] values) throws IllegalArgumentException {
+	public static int lastIndexOfAny(byte[] values, byte[] array, int index,
+			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 		if (values == null)
@@ -401,60 +446,47 @@ public class ArrayUtils {
 	 * ########################################################################
 	 * ========================================================================
 	 */
-	public static boolean equals(char[] source, char[] values) {
-		// Short-circuit in simple cases.
-		if ((source == values) || (source == null && values == null))
-			return true;
-		else if ((source == null && values != null)
-				|| (source != null && values == null))
-			return false;
-		else if (source.length != values.length)
-			return false;
-
-		return equals(0, source, 0, values, values.length);
-	}
-
-	public static boolean equals(int sourceIndex, char[] source,
-			int valuesIndex, char[] values, int length)
+	public static char[] append(char[] values, char[] array)
 			throws IllegalArgumentException {
-		// Short-circuit in simple cases.
-		if (source == values)
-			return true;
-		else if ((source == null && values != null)
-				|| (source != null && values == null))
-			return false;
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
 
-		/*
-		 * Check all the arguments. Seems lengthy, but it's fast and allows the
-		 * code below it to be simpler. We have to do these sanity checks at
-		 * SOME regardless.
-		 */
-		if (sourceIndex < 0 || valuesIndex < 0 || length < 0
-				|| (sourceIndex + length) > source.length
-				|| (valuesIndex + length) > values.length)
-			throw new IllegalArgumentException("sourceIndex [" + sourceIndex
-					+ "] and valuesIndex [" + valuesIndex
-					+ "] must be >= 0. length [" + length
-					+ "] must be >= 0. (sourceIndex + length) ["
-					+ (sourceIndex + length) + "] must be <= source.length ["
-					+ source.length + "]. (valuesIndex + length) ["
-					+ (valuesIndex + length) + "]  must be <= values.length ["
-					+ values.length + "].");
-
-		for (int i = 0; i < length; i++) {
-			if (source[sourceIndex + i] != values[valuesIndex + i])
-				return false;
-		}
-
-		return true;
+		return insert(values, array, array.length);
 	}
 
-	public static char[] ensureCapacity(int capacity, char[] array) {
-		return ensureCapacity(capacity, 1, array);
+	public static char[] insert(char[] values, char[] array, int index)
+			throws IllegalArgumentException {
+		if (values == null || array == null)
+			throw new IllegalArgumentException(
+					"Neither values or array can be null.");
+		if (index < 0 || index > array.length)
+			throw new IllegalArgumentException("index [" + index
+					+ "] must be >= 0 and <= array.length [" + array.length
+					+ "]");
+
+		// Remember the array's original length
+		int originalLength = array.length;
+
+		// Ensure the final size of the array
+		array = ensureCapacity(array, array.length + values.length);
+
+		// Move contents down to make room if this is an insert.
+		if (index < array.length)
+			System.arraycopy(array, index, array, index + values.length,
+					originalLength - index);
+
+		// Copy the values into the resulting array
+		System.arraycopy(values, 0, array, index, values.length);
+
+		return array;
 	}
 
-	public static char[] ensureCapacity(int capacity, float growthFactor,
-			char[] array) {
+	public static char[] ensureCapacity(char[] array, int capacity) {
+		return ensureCapacity(array, capacity, 1);
+	}
+
+	public static char[] ensureCapacity(char[] array, int capacity,
+			float growthFactor) {
 		if (capacity < array.length)
 			return array;
 
@@ -471,28 +503,75 @@ public class ArrayUtils {
 		return newArray;
 	}
 
+	public static boolean equals(char[] values, char[] array) {
+		// Short-circuit in simple cases.
+		if ((array == values) || (array == null && values == null))
+			return true;
+		else if ((array == null && values != null)
+				|| (array != null && values == null))
+			return false;
+		else if (array.length != values.length)
+			return false;
+
+		return equals(values, 0, array, 0, values.length);
+	}
+
+	public static boolean equals(char[] values, int valuesIndex, char[] array,
+			int arrayIndex, int length) throws IllegalArgumentException {
+		// Short-circuit in simple cases.
+		if (array == values)
+			return true;
+		else if ((array == null && values != null)
+				|| (array != null && values == null))
+			return false;
+
+		/*
+		 * Check all the arguments. Seems lengthy, but it's fast and allows the
+		 * code below it to be simpler. We have to do these sanity checks at
+		 * SOME regardless.
+		 */
+		if (arrayIndex < 0 || valuesIndex < 0 || length < 0
+				|| (arrayIndex + length) > array.length
+				|| (valuesIndex + length) > values.length)
+			throw new IllegalArgumentException("sourceIndex [" + arrayIndex
+					+ "] and valuesIndex [" + valuesIndex
+					+ "] must be >= 0. length [" + length
+					+ "] must be >= 0. (sourceIndex + length) ["
+					+ (arrayIndex + length) + "] must be <= source.length ["
+					+ array.length + "]. (valuesIndex + length) ["
+					+ (valuesIndex + length) + "]  must be <= values.length ["
+					+ values.length + "].");
+
+		for (int i = 0; i < length; i++) {
+			if (array[arrayIndex + i] != values[valuesIndex + i])
+				return false;
+		}
+
+		return true;
+	}
+
 	/*
 	 * ========================================================================
 	 * char[] array, char value
 	 * ========================================================================
 	 */
-	public static int indexOf(char[] array, char value)
+	public static int indexOf(char value, char[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(0, array.length, array, value);
+		return indexOf(value, array, 0, array.length);
 	}
 
-	public static int indexOf(int index, char[] array, char value)
+	public static int indexOf(char value, char[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(index, array.length - index, array, value);
+		return indexOf(value, array, index, array.length - index);
 	}
 
-	public static int indexOf(int index, int length, char[] array, char value)
+	public static int indexOf(char value, char[] array, int index, int length)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
@@ -515,23 +594,23 @@ public class ArrayUtils {
 	 * char[] array, char[] values
 	 * ========================================================================
 	 */
-	public static int indexOf(char[] array, char[] values)
+	public static int indexOf(char[] values, char[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(0, array.length, array, values);
+		return indexOf(values, array, 0, array.length);
 	}
 
-	public static int indexOf(int index, char[] array, char[] values)
+	public static int indexOf(char[] values, char[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(index, array.length - index, array, values);
+		return indexOf(values, array, index, array.length - index);
 	}
 
-	public static int indexOf(int index, int length, char[] array, char[] values)
+	public static int indexOf(char[] values, char[] array, int index, int length)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
@@ -570,24 +649,24 @@ public class ArrayUtils {
 	 * char[] array, ANY char[] values
 	 * ========================================================================
 	 */
-	public static int indexOfAny(char[] array, char[] values)
+	public static int indexOfAny(char[] values, char[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOfAny(0, array.length, array, values);
+		return indexOfAny(values, array, 0, array.length);
 	}
 
-	public static int indexOfAny(int index, char[] array, char[] values)
+	public static int indexOfAny(char[] values, char[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOfAny(index, array.length - index, array, values);
+		return indexOfAny(values, array, index, array.length - index);
 	}
 
-	public static int indexOfAny(int index, int length, char[] array,
-			char[] values) throws IllegalArgumentException {
+	public static int indexOfAny(char[] values, char[] array, int index,
+			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 		if (values == null)
@@ -618,24 +697,24 @@ public class ArrayUtils {
 	 * REVERSE char[] array, char value
 	 * ========================================================================
 	 */
-	public static int lastIndexOf(char[] array, char value)
+	public static int lastIndexOf(char value, char[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOf(0, array.length, array, value);
+		return lastIndexOf(value, array, 0, array.length);
 	}
 
-	public static int lastIndexOf(int index, char[] array, char value)
+	public static int lastIndexOf(char value, char[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return indexOf(index, array.length - index, array, value);
+		return indexOf(value, array, index, array.length - index);
 	}
 
-	public static int lastIndexOf(int index, int length, char[] array,
-			char value) throws IllegalArgumentException {
+	public static int lastIndexOf(char value, char[] array, int index,
+			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 		if (index < 0 || length < 0 || (index + length) > array.length)
@@ -657,24 +736,24 @@ public class ArrayUtils {
 	 * REVERSE char[] array, char[] values
 	 * ========================================================================
 	 */
-	public static int lastIndexOf(char[] array, char[] values)
+	public static int lastIndexOf(char[] values, char[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOf(0, array.length, array, values);
+		return lastIndexOf(values, array, 0, array.length);
 	}
 
-	public static int lastIndexOf(int index, char[] array, char[] values)
+	public static int lastIndexOf(char[] values, char[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOf(index, array.length - index, array, values);
+		return lastIndexOf(values, array, index, array.length - index);
 	}
 
-	public static int lastIndexOf(int index, int length, char[] array,
-			char[] values) throws IllegalArgumentException {
+	public static int lastIndexOf(char[] values, char[] array, int index,
+			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 		if (values == null)
@@ -713,24 +792,24 @@ public class ArrayUtils {
 	 * REVERSE char[] array, ANY char[] values
 	 * ========================================================================
 	 */
-	public static int lastIndexOfAny(char[] array, char[] values)
+	public static int lastIndexOfAny(char[] values, char[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOfAny(0, array.length, array, values);
+		return lastIndexOfAny(values, array, 0, array.length);
 	}
 
-	public static int lastIndexOfAny(int index, char[] array, char[] values)
+	public static int lastIndexOfAny(char[] values, char[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return lastIndexOfAny(index, array.length - index, array, values);
+		return lastIndexOfAny(values, array, index, array.length - index);
 	}
 
-	public static int lastIndexOfAny(int index, int length, char[] array,
-			char[] values) throws IllegalArgumentException {
+	public static int lastIndexOfAny(char[] values, char[] array, int index,
+			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 		if (values == null)

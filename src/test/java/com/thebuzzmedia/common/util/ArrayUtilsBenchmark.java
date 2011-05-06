@@ -56,7 +56,7 @@ public class ArrayUtilsBenchmark {
 	public static void indexOfValBenchmark() {
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < ITERS; i++) {
-			if (ArrayUtils.indexOf(DATA, VAL) == -1)
+			if (ArrayUtils.indexOf(VAL, DATA) == -1)
 				throw new RuntimeException(
 						"indexOf returned -1, it shouldn't ever do this in this benchmark.");
 		}
@@ -68,7 +68,7 @@ public class ArrayUtilsBenchmark {
 	public static void indexOfValsBenchmark() {
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < ITERS; i++) {
-			if (ArrayUtils.indexOf(DATA, VALS) == -1)
+			if (ArrayUtils.indexOf(VALS, DATA) == -1)
 				throw new RuntimeException(
 						"indexOf returned -1, it shouldn't ever do this in this benchmark.");
 		}
@@ -80,7 +80,7 @@ public class ArrayUtilsBenchmark {
 	public static void indexOfAnyValsBenchmark() {
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < ITERS; i++) {
-			if (ArrayUtils.indexOfAny(DATA, VALS) == -1)
+			if (ArrayUtils.indexOfAny(VALS, DATA) == -1)
 				throw new RuntimeException(
 						"indexOf returned -1, it shouldn't ever do this in this benchmark.");
 		}
