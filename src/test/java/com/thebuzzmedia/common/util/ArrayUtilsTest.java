@@ -740,6 +740,39 @@ public class ArrayUtilsTest {
 		assertEquals(-1, ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 10, 1));
 		assertEquals(10, ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY, 10, 1));
 	}
+	
+	@Test
+	public void testFirstIndexAfterBaB() {
+		assertEquals(0, ArrayUtils.firstIndexAfter(Byte.MAX_VALUE, BARRAY));
+		assertEquals(1, ArrayUtils.firstIndexAfter((byte)-5, BARRAY));
+	}
+	
+	@Test
+	public void testFirstIndexAfterIBaB() {
+		assertEquals(0, ArrayUtils.firstIndexAfter(Byte.MAX_VALUE, BARRAY, 0));
+		assertEquals(1, ArrayUtils.firstIndexAfter((byte)-5, BARRAY, 0));
+		assertEquals(6, ArrayUtils.firstIndexAfter((byte)0, BARRAY, 5));
+		assertEquals(11, ArrayUtils.firstIndexAfter((byte)5, BARRAY, 10));
+	}
+	
+	@Test
+	public void testFirstIndexAfterIIBaB() {
+		assertEquals(0, ArrayUtils.firstIndexAfter(Byte.MAX_VALUE, BARRAY, 0, BARRAY.length));
+		assertEquals(1, ArrayUtils.firstIndexAfter((byte)-5, BARRAY, 0, 1));
+		assertEquals(6, ArrayUtils.firstIndexAfter((byte)0, BARRAY, 5, 1));
+		assertEquals(11, ArrayUtils.firstIndexAfter((byte)5, BARRAY, 10, 1));
+		
+		assertEquals(1, ArrayUtils.firstIndexAfter((byte)-5, BARRAY, 0, 10));
+		assertEquals(6, ArrayUtils.firstIndexAfter((byte)0, BARRAY, 5, 5));
+		assertEquals(11, ArrayUtils.firstIndexAfter((byte)5, BARRAY, 10, 1));
+		
+		try {
+			ArrayUtils.firstIndexAfter((byte)0, BARRAY, 5, 20);
+			assertTrue(false);
+		} catch(Exception e) {
+			assertTrue(true);
+		}
+	}
 
 	/* ############################################################## */
 	/* ############################################################## */
@@ -1442,4 +1475,7 @@ public class ArrayUtilsTest {
 		assertEquals(-1, ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 10, 1));
 		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 10, 1));
 	}
+	
+	// TODO: Add tests for firstIndexAfter
+	
 }

@@ -17,13 +17,15 @@ package com.thebuzzmedia.common.util;
 
 import java.util.Random;
 
+// QUICK REF: http://keepass.info/help/base/pwgenerator.html
 public class RandomUtils {
 	public static final char[] NUMBER_ALPHABET = { '0', '1', '2', '3', '4',
 			'5', '6', '7', '8', '9' };
-	public static final char[] SYMBOL_ALPHABET = { '!', '\"', '#', '$', '%',
-			'&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<',
-			'=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}',
-			'~' };
+	public static final char[] ASCII_SYMBOL_ALPHABET = { '!', '\"', '#', '$',
+			'%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';',
+			'<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|',
+			'}', '~' };
+
 	public static final char[] LOWER_CASE_ALPHABET = { 'a', 'b', 'c', 'd', 'e',
 			'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
 			's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
@@ -42,10 +44,11 @@ public class RandomUtils {
 			'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
 			'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3',
 			'4', '5', '6', '7', '8', '9' };
-	public static final char[] NUMERIC_SYMBOLIC_ALPHABET = { '0', '1', '2',
-			'3', '4', '5', '6', '7', '8', '9', '!', '\"', '#', '$', '%', '&',
-			'\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=',
-			'>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~' };
+	public static final char[] ASCII_SYMBOL_AND_NUMBER_ALPHABET = { '!', '\"',
+			'#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/',
+			':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`',
+			'{', '|', '}', '~', '0', '1', '2', '3', '4', '5', '6', '7', '8',
+			'9' };
 
 	public static final char[] FULL_ASCII_ALPHABET = { 'A', 'B', 'C', 'D', 'E',
 			'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',

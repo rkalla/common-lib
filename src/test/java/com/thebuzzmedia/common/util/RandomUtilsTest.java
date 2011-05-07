@@ -148,8 +148,8 @@ public class RandomUtilsTest {
 		 * in every alphabet for every array generated.
 		 */
 		char[][] alphabets = { RandomUtils.NUMBER_ALPHABET,
-				RandomUtils.SYMBOL_ALPHABET,
-				RandomUtils.NUMERIC_SYMBOLIC_ALPHABET,
+				RandomUtils.ASCII_SYMBOL_ALPHABET,
+				RandomUtils.ASCII_SYMBOL_AND_NUMBER_ALPHABET,
 				RandomUtils.UPPER_CASE_ALPHABET,
 				RandomUtils.LOWER_CASE_ALPHABET,
 				RandomUtils.ALPHA_NUMERIC_ALPHABET,

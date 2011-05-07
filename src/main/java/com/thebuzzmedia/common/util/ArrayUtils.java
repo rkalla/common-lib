@@ -280,16 +280,6 @@ public class ArrayUtils {
 		return INVALID_INDEX;
 	}
 
-	// TODO: Is naming good/clear?
-	public static int indexAfter(byte value, byte[] array) {
-	}
-	
-	public static int indexAfter(byte value, byte[] array, int index) {
-	}
-	
-	public static int indexAfter(byte value, byte[] array, int index, int length) {
-	}
-	
 	/*
 	 * ========================================================================
 	 * REVERSE byte[] array, byte value
@@ -431,6 +421,149 @@ public class ArrayUtils {
 		}
 
 		return INVALID_INDEX;
+	}
+
+	public static int firstIndexAfter(byte value, byte[] array)
+			throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+
+		return firstIndexAfter(value, array, 0, array.length);
+	}
+
+	public static int firstIndexAfter(byte value, byte[] array, int index)
+			throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+
+		return firstIndexAfter(value, array, index, array.length - index);
+	}
+
+	public static int firstIndexAfter(byte value, byte[] array, int index,
+			int length) throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+		if (index < 0 || length < 0 || (index + length) > array.length)
+			throw new IllegalArgumentException("index [" + index
+					+ "] must be >= 0, length [" + length
+					+ "] must be >= 0 and (index+length) [" + (index + length)
+					+ "] must be < array.length [" + array.length + "]");
+
+		for (int end = (index + length); index < end && array[index] == value; index++)
+			;
+
+		return index;
+	}
+
+	public static int firstIndexAfter(byte[] values, byte[] array)
+			throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+
+		return firstIndexAfter(values, array, 0, array.length);
+	}
+
+	public static int firstIndexAfter(byte[] values, byte[] array, int index)
+			throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+
+		return firstIndexAfter(values, array, index, array.length - index);
+	}
+
+	public static int firstIndexAfter(byte[] values, byte[] array, int index,
+			int length) throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+		if (values == null)
+			throw new IllegalArgumentException("values cannot be null");
+		if (length < values.length)
+			throw new IllegalArgumentException("length [" + length
+					+ "] must be >= values.length [" + values.length + "]");
+		if (index < 0 || length < 0 || (index + length) > array.length)
+			throw new IllegalArgumentException("index [" + index
+					+ "] must be >= 0, length [" + length
+					+ "] must be >= 0 and (index+length) [" + (index + length)
+					+ "] must be < array.length [" + array.length + "]");
+
+		// pre-define once
+		int j;
+
+		// Loop until we cannot match values anymore
+		for (int end = (index + length - values.length); index <= end; index++) {
+			// Increment j as long as we can match values in-order
+			for (j = 0; j < values.length && values[j] == array[index + j]; j++)
+				;
+
+			/*
+			 * If j is values.length, we matched all, so we need to keep going,
+			 * otherwise return the index we found the non-match at.
+			 */
+			if (j == values.length)
+				index += j;
+			else
+				return (index + j);
+		}
+
+		return index;
+	}
+
+	public static int firstIndexAfterAny(byte[] values, byte[] array)
+			throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+
+		return firstIndexAfterAny(values, array, 0, array.length);
+	}
+
+	public static int firstIndexAfterAny(byte[] values, byte[] array, int index)
+			throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+
+		return firstIndexAfterAny(values, array, index, array.length - index);
+	}
+
+	public static int firstIndexAfterAny(byte[] values, byte[] array,
+			int index, int length) throws IllegalArgumentException {
+		if (array == null)
+			throw new IllegalArgumentException("array cannot be null");
+		if (values == null)
+			throw new IllegalArgumentException("values cannot be null");
+		if (index < 0 || length < 0 || (index + length) > array.length)
+			throw new IllegalArgumentException("index [" + index
+					+ "] must be >= 0, length [" + length
+					+ "] must be >= 0 and (index+length) [" + (index + length)
+					+ "] must be < array.length [" + array.length + "]");
+
+		// pre-define once
+		int j;
+		boolean match;
+
+		// Cycle over each source char
+		for (int end = (index + length); index < end; index++) {
+			byte b = array[index];
+
+			/*
+			 * Compare current char to our given values; if ANY match, stop
+			 * comparing and move to the next char. If non match, return the
+			 * index that occurred to the caller.
+			 */
+			for (match = false, j = 0; !match && j < values.length; j++) {
+				if (b == values[j])
+					match = true;
+			}
+
+			/*
+			 * If there was no match, return the index that occurred at to the
+			 * caller. If there WAS a match, cycle to the next char and try
+			 * again.
+			 */
+			if (!match)
+				return (index + j);
+		}
+
+		return index;
 	}
 
 	/*
