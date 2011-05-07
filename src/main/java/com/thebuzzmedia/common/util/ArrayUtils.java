@@ -15,9 +15,6 @@
  */
 package com.thebuzzmedia.common.util;
 
-// TODO: add indexNOTof methods.
-// TODO: Add method that copies array A into array B (resizing if necessary) and returns result.
-// basically makes appending/inserting into an array easier.
 public class ArrayUtils {
 	public static final int INVALID_INDEX = -1;
 
@@ -130,6 +127,11 @@ public class ArrayUtils {
 					+ (valuesIndex + length) + "]  must be <= values.length ["
 					+ values.length + "].");
 
+		return equalsNoCheck(values, valuesIndex, array, arrayIndex, length);
+	}
+
+	public static boolean equalsNoCheck(byte[] values, int valuesIndex,
+			byte[] array, int arrayIndex, int length) {
 		for (int i = 0; i < length; i++) {
 			if (array[arrayIndex + i] != values[valuesIndex + i])
 				return false;
@@ -169,6 +171,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexOfNoCheck(value, array, index, length);
+	}
+
+	public static int indexOfNoCheck(byte value, byte[] array, int index,
+			int length) {
 		for (int end = (index + length); index < end; index++) {
 			if (array[index] == value)
 				return index;
@@ -213,6 +220,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexOfNoCheck(values, array, index, length);
+	}
+
+	public static int indexOfNoCheck(byte[] values, byte[] array, int index,
+			int length) {
 		// pre-define once
 		int j;
 
@@ -265,6 +277,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexOfAnyNoCheck(values, array, index, length);
+	}
+
+	public static int indexOfAnyNoCheck(byte[] values, byte[] array, int index,
+			int length) {
 		// pre-define once
 		int j;
 
@@ -311,6 +328,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return lastIndexOfNoCheck(value, array, index, length);
+	}
+
+	public static int lastIndexOfNoCheck(byte value, byte[] array, int index,
+			int length) {
 		for (int i = (index + length - 1); i >= index; i--) {
 			if (array[i] == value)
 				return i;
@@ -355,6 +377,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return lastIndexOfNoCheck(values, array, index, length);
+	}
+
+	public static int lastIndexOfNoCheck(byte[] values, byte[] array,
+			int index, int length) {
 		// pre-define once
 		int j;
 
@@ -408,6 +435,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return lastIndexOfAnyNoCheck(values, array, index, length);
+	}
+
+	public static int lastIndexOfAnyNoCheck(byte[] values, byte[] array,
+			int index, int length) {
 		// pre-define once
 		int j;
 
@@ -449,9 +481,13 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexAfterNoCheck(value, array, index, length);
+	}
+
+	public static int indexAfterNoCheck(byte value, byte[] array, int index,
+			int length) {
 		for (int end = (index + length); index < end && array[index] == value; index++)
 			;
-
 		return index;
 	}
 
@@ -486,6 +522,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexAfterNoCheck(values, array, index, length);
+	}
+
+	public static int indexAfterNoCheck(byte[] values, byte[] array, int index,
+			int length) {
 		// pre-define once
 		int j;
 
@@ -539,6 +580,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexAfterAnyNoCheck(values, array, index, length);
+	}
+
+	public static int indexAfterAnyNoCheck(byte[] values, byte[] array,
+			int index, int length) {
 		// pre-define once
 		int j;
 		boolean match;
@@ -678,6 +724,11 @@ public class ArrayUtils {
 					+ (valuesIndex + length) + "]  must be <= values.length ["
 					+ values.length + "].");
 
+		return equalsNoCheck(values, valuesIndex, array, arrayIndex, length);
+	}
+
+	public static boolean equalsNoCheck(char[] values, int valuesIndex,
+			char[] array, int arrayIndex, int length) {
 		for (int i = 0; i < length; i++) {
 			if (array[arrayIndex + i] != values[valuesIndex + i])
 				return false;
@@ -717,6 +768,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexOfNoCheck(value, array, index, length);
+	}
+
+	public static int indexOfNoCheck(char value, char[] array, int index,
+			int length) {
 		for (int end = (index + length); index < end; index++) {
 			if (array[index] == value)
 				return index;
@@ -761,6 +817,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexOfNoCheck(values, array, index, length);
+	}
+
+	public static int indexOfNoCheck(char[] values, char[] array, int index,
+			int length) {
 		// pre-define once
 		int j;
 
@@ -813,6 +874,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexOfAnyNoCheck(values, array, index, length);
+	}
+
+	public static int indexOfAnyNoCheck(char[] values, char[] array, int index,
+			int length) {
 		// pre-define once
 		int j;
 
@@ -859,6 +925,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return lastIndexOfNoCheck(value, array, index, length);
+	}
+
+	public static int lastIndexOfNoCheck(char value, char[] array, int index,
+			int length) {
 		for (int i = (index + length - 1); i >= index; i--) {
 			if (array[i] == value)
 				return i;
@@ -903,6 +974,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return lastIndexOfNoCheck(values, array, index, length);
+	}
+
+	public static int lastIndexOfNoCheck(char[] values, char[] array,
+			int index, int length) {
 		// pre-define once
 		int j;
 
@@ -956,6 +1032,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return lastIndexOfAnyNoCheck(values, array, index, length);
+	}
+
+	public static int lastIndexOfAnyNoCheck(char[] values, char[] array,
+			int index, int length) {
 		// pre-define once
 		int j;
 
@@ -997,9 +1078,13 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexAfterNoCheck(value, array, index, length);
+	}
+
+	public static int indexAfterNoCheck(char value, char[] array, int index,
+			int length) {
 		for (int end = (index + length); index < end && array[index] == value; index++)
 			;
-
 		return index;
 	}
 
@@ -1034,6 +1119,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexAfterNoCheck(values, array, index, length);
+	}
+
+	public static int indexAfterNoCheck(char[] values, char[] array, int index,
+			int length) {
 		// pre-define once
 		int j;
 
@@ -1087,6 +1177,11 @@ public class ArrayUtils {
 					+ "] must be >= 0 and (index+length) [" + (index + length)
 					+ "] must be < array.length [" + array.length + "]");
 
+		return indexAfterAnyNoCheck(values, array, index, length);
+	}
+
+	public static int indexAfterAnyNoCheck(char[] values, char[] array,
+			int index, int length) {
 		// pre-define once
 		int j;
 		boolean match;
