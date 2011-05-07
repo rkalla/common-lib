@@ -19,6 +19,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+// TODO: Naming of test cases (BaB) needs to be flipped to match the refactored
+// method sigs, otherwise the world will end.
 public class ArrayUtilsTest {
 	public static final byte[] BARRAY = { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
 
@@ -29,6 +31,12 @@ public class ArrayUtilsTest {
 	public static final byte[] BVALUES_NEG = { -5, -4, -3, -2, -1 };
 	public static final byte[] BVALUES_ZERO = { 0 };
 	public static final byte[] BVALUES_POS = { 1, 2, 3, 4, 5 };
+
+	public static final byte[] BREPEAT = { -3, -3, -3, 0, 0, 5, 5, 5 };
+	public static final byte[] BREPEAT_NEG = { -3, -3, -3 };
+	public static final byte[] BREPEAT_ZERO = { 0, 0 };
+	public static final byte[] BREPEAT_POS = { 5, 5, 5 };
+	public static final byte[] BREPEAT_ANY = { -3, 0, 5 };
 
 	public static final char[] CARRAY = { 'a', 'b', 'c', 'd', 'e', '0', '1',
 			'2', '3', '4', '5' };
@@ -147,13 +155,13 @@ public class ArrayUtilsTest {
 		assertFalse(ArrayUtils.equals(BARRAY, (byte[]) null));
 		assertFalse(ArrayUtils.equals((byte[]) null, BARRAY));
 		assertFalse(ArrayUtils.equals(BARRAY, BVALUES_POS));
-	
+
 		assertTrue(ArrayUtils.equals((byte[]) null, (byte[]) null));
 		assertTrue(ArrayUtils.equals(BARRAY, BARRAY));
-	
+
 		byte[] copy = new byte[BARRAY.length];
 		System.arraycopy(BARRAY, 0, copy, 0, BARRAY.length);
-	
+
 		assertTrue(ArrayUtils.equals(copy, BARRAY));
 	}
 
@@ -161,7 +169,7 @@ public class ArrayUtilsTest {
 	public void testEqualsIBaIBaI() {
 		assertFalse(ArrayUtils.equals(null, 0, BARRAY, 0, BARRAY.length));
 		assertFalse(ArrayUtils.equals(BARRAY, 0, null, 0, BARRAY.length));
-	
+
 		assertTrue(ArrayUtils.equals(BARRAY, 0, BARRAY, 0, BARRAY.length));
 		assertTrue(ArrayUtils.equals(BVALUES_NEG, 0, BARRAY, 0,
 				BVALUES_NEG.length));
@@ -335,6 +343,8 @@ public class ArrayUtilsTest {
 			assertTrue(true);
 		}
 
+		assertEquals(-1, ArrayUtils.indexOf(new byte[] { 80 }, BARRAY));
+
 		assertEquals(0,
 				ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 0, BARRAY.length));
 		assertEquals(5,
@@ -352,6 +362,19 @@ public class ArrayUtilsTest {
 		assertEquals(-1, ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 6, 5));
 		assertEquals(5, ArrayUtils.indexOf(BVALUES_ZERO, BARRAY, 5, 1));
 		assertEquals(-1, ArrayUtils.indexOf(BVALUES_POS, BARRAY, 2, 5));
+
+		try {
+			/*
+			 * Test that the minimum length requirement for testing all of the
+			 * values array is enforced; because the length arg applies to HOW
+			 * MUCH to search in the array, to find the entire values array. Not
+			 * some subset of each.
+			 */
+			assertEquals(0, ArrayUtils.indexOf(BVALUES_NEG, BARRAY, 0, 3));
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 	}
 
 	/*
@@ -740,36 +763,189 @@ public class ArrayUtilsTest {
 		assertEquals(-1, ArrayUtils.lastIndexOfAny(BVALUE_0, BARRAY, 10, 1));
 		assertEquals(10, ArrayUtils.lastIndexOfAny(BVALUE_5, BARRAY, 10, 1));
 	}
-	
+
 	@Test
-	public void testFirstIndexAfterBaB() {
-		assertEquals(0, ArrayUtils.firstIndexAfter(Byte.MAX_VALUE, BARRAY));
-		assertEquals(1, ArrayUtils.firstIndexAfter((byte)-5, BARRAY));
+	public void testIndexAfterBaB() {
+		assertEquals(0, ArrayUtils.indexAfter(Byte.MAX_VALUE, BARRAY));
+		assertEquals(1, ArrayUtils.indexAfter((byte) -5, BARRAY));
+		assertEquals(3, ArrayUtils.indexAfter((byte) -3, BREPEAT));
 	}
-	
+
 	@Test
-	public void testFirstIndexAfterIBaB() {
-		assertEquals(0, ArrayUtils.firstIndexAfter(Byte.MAX_VALUE, BARRAY, 0));
-		assertEquals(1, ArrayUtils.firstIndexAfter((byte)-5, BARRAY, 0));
-		assertEquals(6, ArrayUtils.firstIndexAfter((byte)0, BARRAY, 5));
-		assertEquals(11, ArrayUtils.firstIndexAfter((byte)5, BARRAY, 10));
-	}
-	
-	@Test
-	public void testFirstIndexAfterIIBaB() {
-		assertEquals(0, ArrayUtils.firstIndexAfter(Byte.MAX_VALUE, BARRAY, 0, BARRAY.length));
-		assertEquals(1, ArrayUtils.firstIndexAfter((byte)-5, BARRAY, 0, 1));
-		assertEquals(6, ArrayUtils.firstIndexAfter((byte)0, BARRAY, 5, 1));
-		assertEquals(11, ArrayUtils.firstIndexAfter((byte)5, BARRAY, 10, 1));
-		
-		assertEquals(1, ArrayUtils.firstIndexAfter((byte)-5, BARRAY, 0, 10));
-		assertEquals(6, ArrayUtils.firstIndexAfter((byte)0, BARRAY, 5, 5));
-		assertEquals(11, ArrayUtils.firstIndexAfter((byte)5, BARRAY, 10, 1));
-		
+	public void testIndexAfterIBaB() {
+		assertEquals(0, ArrayUtils.indexAfter(Byte.MAX_VALUE, BARRAY, 0));
+		assertEquals(1, ArrayUtils.indexAfter((byte) -5, BARRAY, 0));
+		assertEquals(6, ArrayUtils.indexAfter((byte) 0, BARRAY, 5));
+		assertEquals(11, ArrayUtils.indexAfter((byte) 5, BARRAY, 10));
+
+		assertEquals(3, ArrayUtils.indexAfter((byte) -3, BREPEAT, 0));
+		assertEquals(5, ArrayUtils.indexAfter((byte) 0, BREPEAT, 3));
+		assertEquals(8, ArrayUtils.indexAfter((byte) 5, BREPEAT, 5));
+
 		try {
-			ArrayUtils.firstIndexAfter((byte)0, BARRAY, 5, 20);
+			ArrayUtils.indexAfter((byte) 0, BARRAY, BARRAY.length + 1);
 			assertTrue(false);
-		} catch(Exception e) {
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterIIBaB() {
+		assertEquals(0,
+				ArrayUtils.indexAfter(Byte.MAX_VALUE, BARRAY, 0, BARRAY.length));
+		assertEquals(1, ArrayUtils.indexAfter((byte) -5, BARRAY, 0, 1));
+		assertEquals(6, ArrayUtils.indexAfter((byte) 0, BARRAY, 5, 1));
+		assertEquals(11, ArrayUtils.indexAfter((byte) 5, BARRAY, 10, 1));
+
+		assertEquals(1, ArrayUtils.indexAfter((byte) -5, BARRAY, 0, 10));
+		assertEquals(6, ArrayUtils.indexAfter((byte) 0, BARRAY, 5, 5));
+		assertEquals(11, ArrayUtils.indexAfter((byte) 5, BARRAY, 10, 1));
+
+		assertEquals(2, ArrayUtils.indexAfter((byte) -3, BREPEAT, 0, 2));
+		assertEquals(4, ArrayUtils.indexAfter((byte) 0, BREPEAT, 3, 1));
+		assertEquals(8, ArrayUtils.indexAfter((byte) 5, BREPEAT, 5, 3));
+
+		try {
+			ArrayUtils.indexAfter((byte) 0, BARRAY, -1, BARRAY.length);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		try {
+			ArrayUtils.indexAfter((byte) 0, BARRAY, 5, 20);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterBaBa() {
+		assertEquals(0, ArrayUtils.indexAfter(new byte[] { 45, 50 }, BARRAY));
+		assertEquals(11, ArrayUtils.indexAfter(BARRAY, BARRAY));
+		assertEquals(1, ArrayUtils.indexAfter(BVALUE_N5, BARRAY));
+		assertEquals(5, ArrayUtils.indexAfter(BVALUES_NEG, BARRAY));
+
+		assertEquals(3, ArrayUtils.indexAfter(BREPEAT_NEG, BREPEAT));
+	}
+
+	@Test
+	public void testIndexAfterIBaBa() {
+		assertEquals(0,
+				ArrayUtils.indexAfter(new byte[] { Byte.MAX_VALUE }, BARRAY, 0));
+		assertEquals(1, ArrayUtils.indexAfter(BVALUE_N5, BARRAY, 0));
+		assertEquals(6, ArrayUtils.indexAfter(BVALUE_0, BARRAY, 5));
+		assertEquals(11, ArrayUtils.indexAfter(BVALUE_5, BARRAY, 10));
+
+		assertEquals(3, ArrayUtils.indexAfter(BREPEAT_NEG, BREPEAT, 0));
+		assertEquals(5, ArrayUtils.indexAfter(BREPEAT_ZERO, BREPEAT, 3));
+		assertEquals(8, ArrayUtils.indexAfter(BREPEAT_POS, BREPEAT, 5));
+
+		try {
+			ArrayUtils.indexAfter(BVALUE_N5, BARRAY, BARRAY.length + 1);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterIIBaBa() {
+		assertEquals(0, ArrayUtils.indexAfter(new byte[] { Byte.MAX_VALUE },
+				BARRAY, 0, BARRAY.length));
+		assertEquals(1, ArrayUtils.indexAfter(BVALUE_N5, BARRAY, 0, 1));
+		assertEquals(6, ArrayUtils.indexAfter(BVALUE_0, BARRAY, 5, 1));
+		assertEquals(11, ArrayUtils.indexAfter(BVALUE_5, BARRAY, 10, 1));
+
+		assertEquals(1, ArrayUtils.indexAfter(BVALUE_N5, BARRAY, 0, 10));
+		assertEquals(6, ArrayUtils.indexAfter(BVALUE_0, BARRAY, 5, 5));
+		assertEquals(11, ArrayUtils.indexAfter(BVALUE_5, BARRAY, 10, 1));
+
+		try {
+			/*
+			 * Test that the minimum length requirement for testing all of the
+			 * values array is enforced; because the length arg applies to HOW
+			 * MUCH to search in the array, to find the entire values array. Not
+			 * some subset of each.
+			 */
+			assertEquals(2, ArrayUtils.indexAfter(BREPEAT_NEG, BREPEAT, 0, 2));
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		assertEquals(3, ArrayUtils.indexAfter(BREPEAT_NEG, BREPEAT, 0, 3));
+		assertEquals(5, ArrayUtils.indexAfter(BREPEAT_ZERO, BREPEAT, 3, 2));
+		assertEquals(8, ArrayUtils.indexAfter(BREPEAT_POS, BREPEAT, 5, 3));
+
+		try {
+			ArrayUtils.indexAfter(BVALUE_0, BARRAY, -1, BARRAY.length);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		try {
+			ArrayUtils.indexAfter(BVALUE_0, BARRAY, 5, 20);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterAnyBaBa() {
+		assertEquals(0, ArrayUtils.indexAfterAny(new byte[] { 77 }, BREPEAT));
+		assertEquals(3, ArrayUtils.indexAfterAny(BREPEAT_NEG, BREPEAT));
+		assertEquals(8, ArrayUtils.indexAfterAny(BREPEAT_ANY, BREPEAT));
+	}
+
+	@Test
+	public void testIndexAfterAnyIBaBa() {
+		assertEquals(0, ArrayUtils.indexAfterAny(new byte[] { 77 }, BREPEAT, 0));
+		assertEquals(5, ArrayUtils.indexAfterAny(BREPEAT_NEG, BREPEAT, 5));
+
+		assertEquals(3, ArrayUtils.indexAfterAny(BREPEAT_NEG, BREPEAT, 1));
+		assertEquals(5, ArrayUtils.indexAfterAny(BREPEAT_ZERO, BREPEAT, 3));
+		assertEquals(8, ArrayUtils.indexAfterAny(BREPEAT_ANY, BREPEAT, 6));
+
+		try {
+			ArrayUtils.indexAfterAny(BREPEAT_ANY, BREPEAT, BREPEAT.length + 1);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterAnyIIBaBa() {
+		assertEquals(0, ArrayUtils.indexAfterAny(new byte[] { 77 }, BREPEAT, 0,
+				BREPEAT.length));
+		assertEquals(5, ArrayUtils.indexAfterAny(BREPEAT_NEG, BREPEAT, 5,
+				BREPEAT.length - 5));
+
+		assertEquals(3, ArrayUtils.indexAfterAny(BREPEAT_NEG, BREPEAT, 1,
+				BREPEAT.length - 1));
+		assertEquals(5, ArrayUtils.indexAfterAny(BREPEAT_ZERO, BREPEAT, 3,
+				BREPEAT.length - 3));
+		assertEquals(8, ArrayUtils.indexAfterAny(BREPEAT_ANY, BREPEAT, 6,
+				BREPEAT.length - 6));
+
+		try {
+			ArrayUtils.indexAfterAny(BREPEAT_ANY, BREPEAT, 0,
+					BREPEAT.length + 1);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		try {
+			ArrayUtils.indexAfterAny(BREPEAT_ANY, BREPEAT, BREPEAT.length + 1,
+					2);
+			assertTrue(false);
+		} catch (Exception e) {
 			assertTrue(true);
 		}
 	}
@@ -883,13 +1059,13 @@ public class ArrayUtilsTest {
 		assertFalse(ArrayUtils.equals(CARRAY, (char[]) null));
 		assertFalse(ArrayUtils.equals((char[]) null, CARRAY));
 		assertFalse(ArrayUtils.equals(CARRAY, CVALUES_POS));
-	
+
 		assertTrue(ArrayUtils.equals((char[]) null, (char[]) null));
 		assertTrue(ArrayUtils.equals(CARRAY, CARRAY));
-	
+
 		char[] copy = new char[CARRAY.length];
 		System.arraycopy(CARRAY, 0, copy, 0, CARRAY.length);
-	
+
 		assertTrue(ArrayUtils.equals(copy, CARRAY));
 	}
 
@@ -897,7 +1073,7 @@ public class ArrayUtilsTest {
 	public void testEqualsICaICaI() {
 		assertFalse(ArrayUtils.equals(null, 0, CARRAY, 0, CARRAY.length));
 		assertFalse(ArrayUtils.equals(CARRAY, 0, null, 0, CARRAY.length));
-	
+
 		assertTrue(ArrayUtils.equals(CARRAY, 0, CARRAY, 0, CARRAY.length));
 		assertTrue(ArrayUtils.equals(CVALUES_NEG, 0, CARRAY, 0,
 				CVALUES_NEG.length));
@@ -1475,7 +1651,7 @@ public class ArrayUtilsTest {
 		assertEquals(-1, ArrayUtils.lastIndexOfAny(CVALUE_0, CARRAY, 10, 1));
 		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 10, 1));
 	}
-	
-	// TODO: Add tests for firstIndexAfter
-	
+
+	// TODO: Add tests for indexAfter
+
 }

@@ -423,23 +423,23 @@ public class ArrayUtils {
 		return INVALID_INDEX;
 	}
 
-	public static int firstIndexAfter(byte value, byte[] array)
+	public static int indexAfter(byte value, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return firstIndexAfter(value, array, 0, array.length);
+		return indexAfter(value, array, 0, array.length);
 	}
 
-	public static int firstIndexAfter(byte value, byte[] array, int index)
+	public static int indexAfter(byte value, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return firstIndexAfter(value, array, index, array.length - index);
+		return indexAfter(value, array, index, array.length - index);
 	}
 
-	public static int firstIndexAfter(byte value, byte[] array, int index,
+	public static int indexAfter(byte value, byte[] array, int index,
 			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
@@ -455,23 +455,23 @@ public class ArrayUtils {
 		return index;
 	}
 
-	public static int firstIndexAfter(byte[] values, byte[] array)
+	public static int indexAfter(byte[] values, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return firstIndexAfter(values, array, 0, array.length);
+		return indexAfter(values, array, 0, array.length);
 	}
 
-	public static int firstIndexAfter(byte[] values, byte[] array, int index)
+	public static int indexAfter(byte[] values, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return firstIndexAfter(values, array, index, array.length - index);
+		return indexAfter(values, array, index, array.length - index);
 	}
 
-	public static int firstIndexAfter(byte[] values, byte[] array, int index,
+	public static int indexAfter(byte[] values, byte[] array, int index,
 			int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
@@ -496,11 +496,14 @@ public class ArrayUtils {
 				;
 
 			/*
-			 * If j is values.length, we matched all, so we need to keep going,
-			 * otherwise return the index we found the non-match at.
+			 * If j is values.length, we matched all, so skip ahead (j-1) and
+			 * keep trying to match, otherwise return the index we found the
+			 * non-match at. We skip j-1 because on the next for-loop itter, it
+			 * will immediately j++ anyway, giving us a total of index += j
+			 * effectively (which is what we want).
 			 */
 			if (j == values.length)
-				index += j;
+				index += (j - 1);
 			else
 				return (index + j);
 		}
@@ -508,23 +511,23 @@ public class ArrayUtils {
 		return index;
 	}
 
-	public static int firstIndexAfterAny(byte[] values, byte[] array)
+	public static int indexAfterAny(byte[] values, byte[] array)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return firstIndexAfterAny(values, array, 0, array.length);
+		return indexAfterAny(values, array, 0, array.length);
 	}
 
-	public static int firstIndexAfterAny(byte[] values, byte[] array, int index)
+	public static int indexAfterAny(byte[] values, byte[] array, int index)
 			throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
 
-		return firstIndexAfterAny(values, array, index, array.length - index);
+		return indexAfterAny(values, array, index, array.length - index);
 	}
 
-	public static int firstIndexAfterAny(byte[] values, byte[] array,
+	public static int indexAfterAny(byte[] values, byte[] array,
 			int index, int length) throws IllegalArgumentException {
 		if (array == null)
 			throw new IllegalArgumentException("array cannot be null");
@@ -560,7 +563,7 @@ public class ArrayUtils {
 			 * again.
 			 */
 			if (!match)
-				return (index + j);
+				return index;
 		}
 
 		return index;
