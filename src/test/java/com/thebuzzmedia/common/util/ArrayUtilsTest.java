@@ -49,6 +49,13 @@ public class ArrayUtilsTest {
 	public static final char[] CVALUES_ZERO = { '0' };
 	public static final char[] CVALUES_POS = { '1', '2', '3', '4', '5' };
 
+	public static final char[] CREPEAT = { 'a', 'a', 'a', 'h', 'h', 'z', 'z',
+			'z' };
+	public static final char[] CREPEAT_NEG = { 'a', 'a', 'a' };
+	public static final char[] CREPEAT_ZERO = { 'h', 'h' };
+	public static final char[] CREPEAT_POS = { 'z', 'z', 'z' };
+	public static final char[] CREPEAT_ANY = { 'a', 'h', 'z' };
+
 	@Test
 	public void testAppendBaBa() {
 		try {
@@ -1652,6 +1659,189 @@ public class ArrayUtilsTest {
 		assertEquals(10, ArrayUtils.lastIndexOfAny(CVALUE_5, CARRAY, 10, 1));
 	}
 
-	// TODO: Add tests for indexAfter
+	@Test
+	public void testIndexAfterCaC() {
+		assertEquals(0, ArrayUtils.indexAfter(Character.MAX_VALUE, CARRAY));
+		assertEquals(1, ArrayUtils.indexAfter('a', CARRAY));
+		assertEquals(3, ArrayUtils.indexAfter('a', CREPEAT));
+	}
 
+	@Test
+	public void testIndexAfterICaC() {
+		assertEquals(0, ArrayUtils.indexAfter(Character.MAX_VALUE, CARRAY, 0));
+		assertEquals(1, ArrayUtils.indexAfter('a', CARRAY, 0));
+		assertEquals(6, ArrayUtils.indexAfter('0', CARRAY, 5));
+		assertEquals(11, ArrayUtils.indexAfter('5', CARRAY, 10));
+
+		assertEquals(3, ArrayUtils.indexAfter('a', CREPEAT, 0));
+		assertEquals(5, ArrayUtils.indexAfter('h', CREPEAT, 3));
+		assertEquals(8, ArrayUtils.indexAfter('z', CREPEAT, 5));
+
+		try {
+			ArrayUtils.indexAfter('0', CARRAY, CARRAY.length + 1);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterIICaC() {
+		assertEquals(0, ArrayUtils.indexAfter(Character.MAX_VALUE, CARRAY, 0,
+				CARRAY.length));
+		assertEquals(1, ArrayUtils.indexAfter('a', CARRAY, 0, 1));
+		assertEquals(6, ArrayUtils.indexAfter('0', CARRAY, 5, 1));
+		assertEquals(11, ArrayUtils.indexAfter('5', CARRAY, 10, 1));
+
+		assertEquals(1, ArrayUtils.indexAfter('a', CARRAY, 0, 10));
+		assertEquals(6, ArrayUtils.indexAfter('0', CARRAY, 5, 5));
+		assertEquals(11, ArrayUtils.indexAfter('5', CARRAY, 10, 1));
+
+		assertEquals(2, ArrayUtils.indexAfter('a', CREPEAT, 0, 2));
+		assertEquals(4, ArrayUtils.indexAfter('h', CREPEAT, 3, 1));
+		assertEquals(8, ArrayUtils.indexAfter('z', CREPEAT, 5, 3));
+
+		try {
+			ArrayUtils.indexAfter('0', CARRAY, -1, CARRAY.length);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		try {
+			ArrayUtils.indexAfter('0', CARRAY, 5, 20);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterCaCa() {
+		assertEquals(0, ArrayUtils.indexAfter(new char[] { 45, 50 }, CARRAY));
+		assertEquals(11, ArrayUtils.indexAfter(CARRAY, CARRAY));
+		assertEquals(1, ArrayUtils.indexAfter(CVALUE_N5, CARRAY));
+		assertEquals(5, ArrayUtils.indexAfter(CVALUES_NEG, CARRAY));
+
+		assertEquals(3, ArrayUtils.indexAfter(CREPEAT_NEG, CREPEAT));
+	}
+
+	@Test
+	public void testIndexAfterICaCa() {
+		assertEquals(0, ArrayUtils.indexAfter(
+				new char[] { Character.MAX_VALUE }, CARRAY, 0));
+		assertEquals(1, ArrayUtils.indexAfter(CVALUE_N5, CARRAY, 0));
+		assertEquals(6, ArrayUtils.indexAfter(CVALUE_0, CARRAY, 5));
+		assertEquals(11, ArrayUtils.indexAfter(CVALUE_5, CARRAY, 10));
+
+		assertEquals(3, ArrayUtils.indexAfter(CREPEAT_NEG, CREPEAT, 0));
+		assertEquals(5, ArrayUtils.indexAfter(CREPEAT_ZERO, CREPEAT, 3));
+		assertEquals(8, ArrayUtils.indexAfter(CREPEAT_POS, CREPEAT, 5));
+
+		try {
+			ArrayUtils.indexAfter(CVALUE_N5, CARRAY, CARRAY.length + 1);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterIICaCa() {
+		assertEquals(0, ArrayUtils.indexAfter(
+				new char[] { Character.MAX_VALUE }, CARRAY, 0, CARRAY.length));
+		assertEquals(1, ArrayUtils.indexAfter(CVALUE_N5, CARRAY, 0, 1));
+		assertEquals(6, ArrayUtils.indexAfter(CVALUE_0, CARRAY, 5, 1));
+		assertEquals(11, ArrayUtils.indexAfter(CVALUE_5, CARRAY, 10, 1));
+
+		assertEquals(1, ArrayUtils.indexAfter(CVALUE_N5, CARRAY, 0, 10));
+		assertEquals(6, ArrayUtils.indexAfter(CVALUE_0, CARRAY, 5, 5));
+		assertEquals(11, ArrayUtils.indexAfter(CVALUE_5, CARRAY, 10, 1));
+
+		try {
+			/*
+			 * Test that the minimum length requirement for testing all of the
+			 * values array is enforced; because the length arg applies to HOW
+			 * MUCH to search in the array, to find the entire values array. Not
+			 * some subset of each.
+			 */
+			assertEquals(2, ArrayUtils.indexAfter(CREPEAT_NEG, CREPEAT, 0, 2));
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		assertEquals(3, ArrayUtils.indexAfter(CREPEAT_NEG, CREPEAT, 0, 3));
+		assertEquals(5, ArrayUtils.indexAfter(CREPEAT_ZERO, CREPEAT, 3, 2));
+		assertEquals(8, ArrayUtils.indexAfter(CREPEAT_POS, CREPEAT, 5, 3));
+
+		try {
+			ArrayUtils.indexAfter(CVALUE_0, CARRAY, -1, CARRAY.length);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		try {
+			ArrayUtils.indexAfter(CVALUE_0, CARRAY, 5, 20);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterAnyCaCa() {
+		assertEquals(0, ArrayUtils.indexAfterAny(new char[] { 77 }, CREPEAT));
+		assertEquals(3, ArrayUtils.indexAfterAny(CREPEAT_NEG, CREPEAT));
+		assertEquals(8, ArrayUtils.indexAfterAny(CREPEAT_ANY, CREPEAT));
+	}
+
+	@Test
+	public void testIndexAfterAnyICaCa() {
+		assertEquals(0, ArrayUtils.indexAfterAny(new char[] { 77 }, CREPEAT, 0));
+		assertEquals(5, ArrayUtils.indexAfterAny(CREPEAT_NEG, CREPEAT, 5));
+
+		assertEquals(3, ArrayUtils.indexAfterAny(CREPEAT_NEG, CREPEAT, 1));
+		assertEquals(5, ArrayUtils.indexAfterAny(CREPEAT_ZERO, CREPEAT, 3));
+		assertEquals(8, ArrayUtils.indexAfterAny(CREPEAT_ANY, CREPEAT, 6));
+
+		try {
+			ArrayUtils.indexAfterAny(CREPEAT_ANY, CREPEAT, CREPEAT.length + 1);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	public void testIndexAfterAnyIICaCa() {
+		assertEquals(0, ArrayUtils.indexAfterAny(new char[] { 77 }, CREPEAT, 0,
+				CREPEAT.length));
+		assertEquals(5, ArrayUtils.indexAfterAny(CREPEAT_NEG, CREPEAT, 5,
+				CREPEAT.length - 5));
+
+		assertEquals(3, ArrayUtils.indexAfterAny(CREPEAT_NEG, CREPEAT, 1,
+				CREPEAT.length - 1));
+		assertEquals(5, ArrayUtils.indexAfterAny(CREPEAT_ZERO, CREPEAT, 3,
+				CREPEAT.length - 3));
+		assertEquals(8, ArrayUtils.indexAfterAny(CREPEAT_ANY, CREPEAT, 6,
+				CREPEAT.length - 6));
+
+		try {
+			ArrayUtils.indexAfterAny(CREPEAT_ANY, CREPEAT, 0,
+					CREPEAT.length + 1);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+
+		try {
+			ArrayUtils.indexAfterAny(CREPEAT_ANY, CREPEAT, CREPEAT.length + 1,
+					2);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
 }
