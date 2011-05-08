@@ -10,4 +10,10 @@ public class ByteToken extends AbstractToken<byte[]> {
 	public String toString() {
 		return new String(source, index, length);
 	}
+
+	public byte[] toArray() {
+		byte[] copy = new byte[length];
+		System.arraycopy(source, index, copy, 0, length);
+		return copy;
+	}
 }

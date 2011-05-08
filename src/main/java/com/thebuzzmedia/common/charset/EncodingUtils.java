@@ -26,7 +26,7 @@ public class EncodingUtils {
 	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.util.encode.maxBufferSize";
 
 	public static final int MAX_BUFFER_SIZE = Integer.getInteger(
-			MAX_BUFFER_SIZE_PROPERTY_NAME, 8192);
+			MAX_BUFFER_SIZE_PROPERTY_NAME, 32768);
 
 	public static final Charset ASCII_CHARSET = Charset.forName("ASCII");
 	public static final Charset UTF8_CHARSET = Charset.forName("UTF-8");

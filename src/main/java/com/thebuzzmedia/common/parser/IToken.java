@@ -6,4 +6,6 @@ public interface IToken<T> {
 	public int getLength();
 	
 	public T getSource();
+	
+	public T toArray();
 }

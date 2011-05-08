@@ -26,7 +26,7 @@ public class DecodingUtils {
 	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.util.decode.maxBufferSize";
 
 	public static final int MAX_BUFFER_SIZE = Integer.getInteger(
-			MAX_BUFFER_SIZE_PROPERTY_NAME, 8192);
+			MAX_BUFFER_SIZE_PROPERTY_NAME, 32768);
 
 	public static final Charset ASCII_CHARSET = Charset.forName("ASCII");
 	public static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
@@ -159,8 +159,6 @@ public class DecodingUtils {
 
 			// Last-check to make sure our result is exactly the right size
 			if (result.length != resultLength) {
-				// TODO: See how often this runs, see if we can calculate a
-				// better guess above.
 				char[] newArray = new char[resultLength];
 				System.arraycopy(result, 0, newArray, 0, resultLength);
 				result = newArray;
