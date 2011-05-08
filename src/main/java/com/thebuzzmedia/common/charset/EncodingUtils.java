@@ -162,8 +162,6 @@ public class EncodingUtils {
 
 			// Last-check to make sure our result is exactly the right size
 			if (result.length != resultLength) {
-				// TODO: See how often this runs, see if we can calculate a
-				// better guess above.
 				byte[] newArray = new byte[resultLength];
 				System.arraycopy(result, 0, newArray, 0, resultLength);
 				result = newArray;
