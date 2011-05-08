@@ -4,14 +4,55 @@ http://www.thebuzzmedia.com/software/common-lib-common-java-utility-library/
 
 Changelog
 ---------
+2.0
+	* Fixed bug in build script where library required Java 6. It now works under
+	Java 5 now.
+	
+	* Added RandomUtils class. Convenience methods for generating random numeric
+	and character values (e.g. for password or unique file names).
+	
+	* Added ArrayUtils "NoCheck" methods for all major index searches and equals
+	methods. These methods do NO pre-condition check. Handy when the utils class
+	is being used inside of another utils class that does all the pre-condition
+	checking already and don't want to incur any overhead.
+	
+	* Added ArrayUtils.append methods
+	
+	* Added ArrayUtils.insert methods
+	
+	* Added ArrayUtils.indexAfter methods to find the first index after the given
+	value(s). Essentially skipping all values in array that match the value list
+	provided, and finding the first non-matching index after the group.
+	
+	* Modified the ordering of arguments in library to more closely match the
+	sequence implied by language.
+	
+	For example, when you see the method "indexOf(char c, chars[] array, int i)"
+	you can read that out loud as: "Find the indexOf 'c', in 'array' starting
+	at index 'i'".
+	
+	Previously the ordering was arbitrary and non-uniform across the library. To
+	help improve the intuitiveness of the library and unify the style, it was
+	changed.
+	
+	* Test coverage for all new methods and classes added.
+	
+	* Integrated into production in the CloudFront Log Parser project.
+	http://www.thebuzzmedia.com/software/cloudfront-log-parser/
+	
+	* Integrated into production in the common-parser-lib project.
+	http://www.thebuzzmedia.com/software/common-parser-lib-common-parser-java-utility-library/
+
 1.1
 	* ArrayUtils additions
 		- equals
 		- ensureCapacity
 		- all methods apply to both byte[] and char[]
+		
 	* Charset util additions
 		- Added DecodingUtils
 		- Added EncodingUtils
+	
 	* Added test cases for all new methods and classes.
 
 1.0

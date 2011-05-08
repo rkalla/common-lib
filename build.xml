@@ -16,8 +16,10 @@ limitations under the License.
 <project name="tbm-common-lib" default="dist">
 	<property name="dir.src" value="src/main/java" />
 	<property name="dir.bin" value="bin" />
+	<property name="dir.lib" value="lib" />
+	<property name="dir.docs" value="docs" />
 	<property name="dir.dist" value="dist" />
-	<property name="dir.javadoc" value="${dir.dist}/javadoc" />
+	<property name="dir.javadoc" value="${dir.dist}/${dir.docs}/javadoc" />
 	
 	<property name="version.major" value="2" />
 	<property name="version.minor" value="0" />
@@ -46,7 +48,10 @@ limitations under the License.
 	<target name="javadoc">
 		<delete dir="${dir.javadoc}" />
 		<mkdir dir="${dir.javadoc}" />
-		<javadoc sourcepath="${dir.src}" destdir="${dir.javadoc}" author="true" windowtitle="common-lib v${version.major}.${version.minor} - The Buzz Media Common Library" footer="Copyright 2011 The Buzz Media, LLC" link="http://download.oracle.com/javase/1.5.0/docs/api/" linksource="true" package="true" source="1.5" use="true" />
+		<javadoc sourcepath="${dir.src}" destdir="${dir.javadoc}" author="true" 
+			windowtitle="common-lib v${version.major}.${version.minor} - The Buzz Media Common Library" 
+			footer="Copyright 2011 The Buzz Media, LLC" link="http://download.oracle.com/javase/1.5.0/docs/api/" 
+			linksource="true" package="true" source="1.5" use="true" />
 	</target>
 
 	<target name="jar" depends="compile">
@@ -61,6 +66,8 @@ limitations under the License.
 	<target name="dist" depends="compile,javadoc,jar,src">
 		<copy file="README" todir="${dir.dist}" />
 		<copy file="LICENSE" todir="${dir.dist}" />
+		<copydir src="${dir.lib}" dest="${dir.dist}/${dir.lib}" />
+		<copydir src="${dir.docs}" dest="${dir.dist}/${dir.docs}" />
 		
 		<jar compress="yes" basedir="${dir.javadoc}" destfile="${dir.dist}/${name.file.javadoc}" />
 		<zip compress="yes" basedir="${dir.dist}" destfile="${dir.dist}/${name.file}-${version.major}.${version.minor}.zip" />
