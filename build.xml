@@ -50,8 +50,11 @@ limitations under the License.
 		<mkdir dir="${dir.javadoc}" />
 		<javadoc sourcepath="${dir.src}" destdir="${dir.javadoc}" author="true" 
 			windowtitle="common-lib v${version.major}.${version.minor} - The Buzz Media Common Library" 
-			footer="Copyright 2011 The Buzz Media, LLC" link="http://download.oracle.com/javase/1.5.0/docs/api/" 
-			linksource="true" package="true" source="1.5" use="true" />
+			footer="Copyright 2011 The Buzz Media, LLC" linksource="true" package="true" 
+			source="1.5" use="true">
+			
+			<link href="http://download.oracle.com/javase/1.5.0/docs/api/" />
+		</javadoc>
 	</target>
 
 	<target name="jar" depends="compile">
@@ -66,8 +69,12 @@ limitations under the License.
 	<target name="dist" depends="compile,javadoc,jar,src">
 		<copy file="README" todir="${dir.dist}" />
 		<copy file="LICENSE" todir="${dir.dist}" />
-		<copydir src="${dir.lib}" dest="${dir.dist}/${dir.lib}" />
-		<copydir src="${dir.docs}" dest="${dir.dist}/${dir.docs}" />
+		<copy todir="${dir.dist}/${dir.lib}">
+			<fileset dir="${dir.lib}" />
+		</copy>
+		<copy todir="${dir.dist}/${dir.docs}">
+			<fileset dir="${dir.docs}" />
+		</copy>
 		
 		<jar compress="yes" basedir="${dir.javadoc}" destfile="${dir.dist}/${name.file.javadoc}" />
 		<zip compress="yes" basedir="${dir.dist}" destfile="${dir.dist}/${name.file}-${version.major}.${version.minor}.zip" />
