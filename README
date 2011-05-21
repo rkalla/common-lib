@@ -4,6 +4,14 @@ http://www.thebuzzmedia.com/software/common-lib-common-java-utility-library/
 
 Changelog
 ---------
+2.1
+	* Added AbstractRetryableTask; an Callable<V> implementation that can 
+	automatically retry failed tasks up to a configurable amount of times, 
+	sleeping the executing Thread a configurable (increasing) duration every 
+	subsequent time the task fails. This is fantastic for cloud-based/API or 
+	data-store operations that may frequently fail and retrying them is not
+	uncommon (e.g. Using Amazon Web Services APIs).
+
 2.0
 	* Fixed bug in build script where library required Java 6. It now works under
 	Java 5 now.
