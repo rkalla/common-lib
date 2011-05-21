@@ -22,14 +22,14 @@ import java.util.concurrent.Callable;
  * Class used to implement an automatically retryable {@link Callable}.
  * <p/>
  * A task that fails and is deemed to be retryable (
- * {@link #canRetry(Exception, int)} returns <code>true</code>) is automatically
- * retried up-to <code>retryCount</code> number of times; gradually increasing
- * the wait-time between retries as determined by the implementation of
- * {@link #calculateRetryDelay(long, double, int)}.
+ * {@link #canRetry(Exception, int, int)} returns <code>true</code>) is
+ * automatically retried up-to <code>retryCount</code> number of times;
+ * gradually increasing the wait-time between retries as determined by the
+ * implementation of {@link #calculateRetryDelay(long, double, int)}.
  * <p/>
- * After the last retry attempt OR if {@link #canRetry(Exception, int)} returns
- * <code>false</code>, the task is considered to have failed and the root
- * exception is propagated to the caller in the form of a wrapping
+ * After the last retry attempt OR if {@link #canRetry(Exception, int, int)}
+ * returns <code>false</code>, the task is considered to have failed and the
+ * root exception is propagated to the caller in the form of a wrapping
  * {@link RuntimeException}.
  * <p/>
  * The {@link RuntimeException} message or {@link RuntimeException#getCause()}
@@ -54,8 +54,8 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	/**
 	 * Create a task that will be retried {@link #DEFAULT_RETRY_COUNT} number of
 	 * times with an initial retry delay of {@link #DEFAULT_INITIAL_RETRY_DELAY}
-	 * that is increased by a factor of {@link #DEFAULT_RETRY_DELAY_FACTOR}
-	 * every time the task fails.
+	 * milliseconds that is increased by a factor of
+	 * {@link #DEFAULT_RETRY_DELAY_FACTOR} every time the task fails.
 	 */
 	public AbstractRetryableTask() {
 		this(DEFAULT_RETRY_COUNT, DEFAULT_INITIAL_RETRY_DELAY,
@@ -71,10 +71,10 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	 * @param retryCount
 	 *            The number of times the task will be retried.
 	 * @param initialRetryDelay
-	 *            The initial retry delay that execution will be paused when the
-	 *            task fails the first time. This value will be grown by
-	 *            <code>retryDelayFactor</code> every subsequent time the task
-	 *            fails.
+	 *            The initial retry delay in milliseconds that execution will be
+	 *            paused when the task fails the first time. This value will be
+	 *            grown by <code>retryDelayFactor</code> every subsequent time
+	 *            the task fails.
 	 * @param retryDelayFactor
 	 *            The factor by which the retry delay is increased every
 	 *            subsequent time the task fails. If a custom implementation of
@@ -105,18 +105,18 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	/**
 	 * Implemented to retry the logic implemented by {@link #callImpl()}
 	 * automatically if it fails with an exception and we are not on our last
-	 * retry attempt and {@link #canRetry(Exception, int)} returns
+	 * retry attempt and {@link #canRetry(Exception, int, int)} returns
 	 * <code>true</code>.
 	 * <p/>
 	 * This method is <code>final</code> to avoid corruption of the retry logic.
 	 * Please implement all task logic in {@link #callImpl()} and should-retry
-	 * logic in {@link #canRetry(Exception, int)}.
+	 * logic in {@link #canRetry(Exception, int, int)}.
 	 * 
 	 * @throws RuntimeException
 	 *             if the executing {@link Thread} is interrupted while sleeping
 	 *             and waiting to retry a failed task or if the task has been
 	 *             retried <code>retryCount</code> times and failed every time
-	 *             or if {@link #canRetry(Exception, int)} returns
+	 *             or if {@link #canRetry(Exception, int, int)} returns
 	 *             <code>false</code> indicating that the task should not be
 	 *             retried. The resulting {@link RuntimeException} will be
 	 *             wrapping the source exception that can be retrieved with
@@ -143,7 +143,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 				 * on our last attempt. If that was our last attempt, we failed
 				 * to execute the task, so we need to get out of here.
 				 */
-				if (i < (retryCount - 1) && canRetry(e, i)) {
+				if (i < (retryCount - 1) && canRetry(e, i, retryCount)) {
 					try {
 						// Calculate how long to sleep based on our last sleep.
 						currentRetryDelay = calculateRetryDelay(
@@ -227,8 +227,8 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	 * @throws Exception
 	 *             if any {@link Exception} is thrown by the implementation
 	 *             indicating that the task has failed and can be potentially
-	 *             retried (depending on what {@link #canRetry(Exception, int)}
-	 *             returns).
+	 *             retried (depending on what
+	 *             {@link #canRetry(Exception, int, int)} returns).
 	 */
 	protected abstract V callImpl() throws Exception;
 
@@ -248,11 +248,16 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	 *            <code>retryCount - 1</code>) as this method is never queried
 	 *            if the last attempted retry fails; the task is considered
 	 *            failed at that point.
+	 * @param maxRetryCount
+	 *            The total number of times this task will be retried. This is
+	 *            the <code>retryCount</code> variable passed to the constructor
+	 *            when this task was created.
 	 * 
 	 * @return <code>true</code> if the task can be retried otherwise returns
 	 *         <code>false</code> to indicate the task failed which causes
 	 *         {@link #call()} to wrap the exception in a
 	 *         {@link RuntimeException} and throw it up to the caller.
 	 */
-	protected abstract boolean canRetry(Exception e, int currentRetryCount);
+	protected abstract boolean canRetry(Exception e, int currentRetryCount,
+			int maxRetryCount);
 }
