@@ -17,7 +17,7 @@ public class AbstractRetryableTaskTest {
 	int taskID = 1;
 
 	ExecutorService executor = Executors.newCachedThreadPool();
-	
+
 	@Before
 	public void reset() {
 		taskID = 1;
@@ -36,7 +36,7 @@ public class AbstractRetryableTaskTest {
 			resultList.add(executor.submit(new TryingTask()));
 
 		// Now confirm non-null results from all tasks.
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < numberOfTasks; i++) {
 			Future<Object> f = resultList.get(i);
 			assertNotNull(f.get());
 		}
@@ -49,10 +49,10 @@ public class AbstractRetryableTaskTest {
 	class TryingTask extends AbstractRetryableTask<Object> {
 		private int id;
 		private int retry = 1;
-		
+
 		public TryingTask() {
 			super(5, 10, 2);
-			
+
 			id = taskID++;
 		}
 
