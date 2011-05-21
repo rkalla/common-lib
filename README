@@ -4,6 +4,14 @@ http://www.thebuzzmedia.com/software/common-lib-common-java-utility-library/
 
 Changelog
 ---------
+2.2
+	* Added IService interface to represent a simple asychronous task-executing
+	service design to compliment the new AbstractRetryableTask class. Although
+	that is not a requirement; IService is specced to process any Callable.
+	
+	* Added DefaultService, a simple implementation of the IService interface
+	used to process tasks using a fixed (configurable) thread pool.
+
 2.1
 	* Added AbstractRetryableTask; an Callable<V> implementation that can 
 	automatically retry failed tasks up to a configurable amount of times, 
