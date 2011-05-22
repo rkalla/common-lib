@@ -30,7 +30,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class DefaultService implements IService {
 	public static final int DEFAULT_THREAD_POOL_SIZE = 64;
 
-	protected ExecutorService executor;
+	private boolean shutdown;
+	private ExecutorService executor;
 
 	public DefaultService() {
 		this(DEFAULT_THREAD_POOL_SIZE);
@@ -40,7 +41,12 @@ public class DefaultService implements IService {
 		if (threadPoolSize < 1)
 			throw new IllegalArgumentException("threadPoolSize must be >= 1");
 
+		shutdown = false;
 		executor = Executors.newFixedThreadPool(threadPoolSize);
+	}
+
+	public boolean isShutdown() {
+		return shutdown;
 	}
 
 	/**
@@ -49,7 +55,11 @@ public class DefaultService implements IService {
 	 * pending tasks will be given a chance to complete.
 	 */
 	public void shutdown() {
+		// Shut down the executor service so all threads are destroyed.
 		executor.shutdown();
+
+		// Update state
+		shutdown = true;
 	}
 
 	public ExecutorService getExecutorService() {

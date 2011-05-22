@@ -33,6 +33,14 @@ import java.util.concurrent.Future;
  */
 public interface IService {
 	/**
+	 * Used to determine if this service has been shutdown already.
+	 * 
+	 * @return <code>true</code> if the service has been shutdown, otherwise
+	 *         returns <code>false</code>.
+	 */
+	public boolean isShutdown();
+
+	/**
 	 * Used to execute clean-up code necessary to "shutdown" this service.
 	 * Implementation details will depend on what resources a {@link IService}
 	 * holds on to and what needs to be cleaned up before exiting.
