@@ -5,12 +5,35 @@ http://www.thebuzzmedia.com/software/common-lib-common-java-utility-library/
 Changelog
 ---------
 2.2
-	* Added IService interface to represent a simple asychronous task-executing
+	* Added IService interface to represent a simple asynchronous task-executing
 	service design to compliment the new AbstractRetryableTask class. Although
-	that is not a requirement; IService is specced to process any Callable.
+	that is not a requirement; IService is specified to process any Callable.
 	
 	* Added DefaultService, a simple implementation of the IService interface
 	used to process tasks using a fixed (configurable) thread pool.
+	
+	* Added IInput input definition.
+	
+	IInput represents a powerful way to wrap any kind of readable input with a
+	common, generics-enhanced interface and read from it given a target buffer.
+	
+	IInputs are a unifying structure at a higher level than similar approaches
+	like InputStream, Reader or even NIO's Buffer classes. None of these existing
+	approaches to abstracting sources of input can be used to wrap/represent
+	each other directly, which is why IInputs were created.
+	
+	IInputs also allow for the controlling or "bounding" of accessible data from
+	an underlying source as well as partially refilling a buffer with fresh
+	content while maintaining existing data in the buffer. 
+	
+	* Default IInput implementations provided for all popular sources:
+		* InputStreamInput	java.io.InputStream source with byte[] buffer
+		* ReaderInput		java.io.Reader source with char[] buffer
+		* ByteArrayInput	byte[] source with byte[] buffer
+		* CharArrayInput	char[] source with char[] buffer
+		* ByteBufferInput	java.nio.ByteBuffer source with byte[] buffer
+		* CharBufferInput	java.nio.CharBuffer source with char[] buffer
+		* CharSequenceInput	java.lang.CharSequence source with char[] buffer
 
 2.1
 	* Added AbstractRetryableTask; an Callable<V> implementation that can 
