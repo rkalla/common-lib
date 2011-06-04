@@ -675,7 +675,7 @@ public class ArrayUtils {
 		// Calculate the new capacity based on the growth factor.
 		int newCapacity = (int) ((float) array.length * growthFactor);
 
-		// Double new capacity it at least big enough for requested amount.
+		// Ensure new capacity it at least big enough for requested amount.
 		if (newCapacity < capacity)
 			newCapacity = capacity;
 
