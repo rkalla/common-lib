@@ -5,13 +5,6 @@ http://www.thebuzzmedia.com/software/common-lib-common-java-utility-library/
 Changelog
 ---------
 2.2
-	* Added IService interface to represent a simple asynchronous task-executing
-	service design to compliment the new AbstractRetryableTask class. Although
-	that is not a requirement; IService is specified to process any Callable.
-	
-	* Added DefaultService, a simple implementation of the IService interface
-	used to process tasks using a fixed (configurable) thread pool.
-	
 	* Added IInput input definition.
 	
 	IInput represents a powerful way to wrap any kind of readable input with a
