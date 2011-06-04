@@ -153,7 +153,7 @@ public abstract class AbstractInput<ST, BT> implements IInput<ST, BT> {
 			throw new IllegalArgumentException("index [" + index
 					+ "] must be >= 0 and length [" + length + "] must be >= 0");
 
-		return readInt(buffer, index, length);
+		return readInternal(buffer, index, length);
 	}
 
 	/**
@@ -181,7 +181,7 @@ public abstract class AbstractInput<ST, BT> implements IInput<ST, BT> {
 	 * 
 	 * @return the amount of data read from the underlying <code>source</code>.
 	 */
-	protected int readInt(BT buffer, int index, int length)
+	protected final int readInternal(BT buffer, int index, int length)
 			throws IllegalArgumentException, IOException {
 		// Check if we have nothing to do first.
 		if (isEmpty())
