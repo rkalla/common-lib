@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DecodingUtils {
-	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.util.decode.maxBufferSize";
+	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.decode.maxBufferSize";
 
 	public static final int MAX_BUFFER_SIZE = Integer.getInteger(
 			MAX_BUFFER_SIZE_PROPERTY_NAME, 32768);

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EncodingUtils {
-	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.util.encode.maxBufferSize";
+	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.encode.maxBufferSize";
 
 	public static final int MAX_BUFFER_SIZE = Integer.getInteger(
 			MAX_BUFFER_SIZE_PROPERTY_NAME, 32768);
