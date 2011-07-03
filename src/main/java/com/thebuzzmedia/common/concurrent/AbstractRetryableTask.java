@@ -25,7 +25,7 @@ import java.util.concurrent.Callable;
  * {@link #canRetry(Exception, int, int)} returns <code>true</code>) is
  * automatically retried up-to <code>retryCount</code> number of times;
  * gradually increasing the wait-time between retries as determined by the
- * implementation of {@link #calculateRetryDelay(long, double, int)}.
+ * implementation of {@link #calculateRetryDelay(int, long, double)}.
  * <p/>
  * After the last retry attempt OR if {@link #canRetry(Exception, int, int)}
  * returns <code>false</code>, the task is considered to have failed and the
@@ -43,7 +43,7 @@ import java.util.concurrent.Callable;
  *            the caller. In short, the result type of this task.
  */
 public abstract class AbstractRetryableTask<V> implements Callable<V> {
-	public static final int DEFAULT_RETRY_COUNT = 3;
+	public static final int DEFAULT_RETRY_COUNT = 5;
 	public static final int DEFAULT_INITIAL_RETRY_DELAY = 100;
 	public static final double DEFAULT_RETRY_DELAY_FACTOR = 5;
 
@@ -78,7 +78,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	 * @param retryDelayFactor
 	 *            The factor by which the retry delay is increased every
 	 *            subsequent time the task fails. If a custom implementation of
-	 *            {@link #calculateRetryDelay(long, double, int)} doesn't need
+	 *            {@link #calculateRetryDelay(int, long, double)} doesn't need
 	 *            this value, it can be set to any positive value and ignored.
 	 * 
 	 * @throws IllegalArgumentException
@@ -127,7 +127,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 		boolean success = false;
 
 		// Attempt the call command up to retryCount times before failing.
-		for (int i = 0; !success && i < retryCount; i++) {
+		for (int i = 1; !success && i <= retryCount; i++) {
 			try {
 				result = callImpl();
 
@@ -138,16 +138,12 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 				 */
 				success = true;
 			} catch (Exception e) {
-				/*
-				 * Only check to see if we should retry the task if we are NOT
-				 * on our last attempt. If that was our last attempt, we failed
-				 * to execute the task, so we need to get out of here.
-				 */
-				if (i < (retryCount - 1) && canRetry(e, i, retryCount)) {
+				// Ensure we have retry attempts left and we can retry
+				if (i < retryCount && canRetry(e, i, retryCount)) {
 					try {
 						// Calculate how long to sleep based on our last sleep.
-						currentRetryDelay = calculateRetryDelay(
-								currentRetryDelay, retryDelayFactor, i);
+						currentRetryDelay = calculateRetryDelay(i,
+								currentRetryDelay, retryDelayFactor);
 
 						// Sleep the current thread for that amount.
 						Thread.sleep(currentRetryDelay);
@@ -196,18 +192,18 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	 * delay-increase logic they wish either using the passed in arguments or
 	 * ignoring them completely.
 	 * 
+	 * @param currentRetryCount
+	 *            The current retry attempt being executed by {@link #call()}.
 	 * @param lastRetryDelay
 	 *            The last delay that the executing thread was slept for.
 	 * @param retryDelayFactor
 	 *            The retry delay factor specified when this task was created.
-	 * @param currentRetryCount
-	 *            The current retry attempt being executed by {@link #call()}.
 	 * 
 	 * @return an updated retry delay value based on whatever the last delay
 	 *         value was and the current retry attempt this is (if applicable).
 	 */
-	protected long calculateRetryDelay(long lastRetryDelay,
-			double retryDelayFactor, int currentRetryCount) {
+	protected long calculateRetryDelay(int currentRetryCount,
+			long lastRetryDelay, double retryDelayFactor) {
 		return (long) ((double) lastRetryDelay * retryDelayFactor);
 	}
 
