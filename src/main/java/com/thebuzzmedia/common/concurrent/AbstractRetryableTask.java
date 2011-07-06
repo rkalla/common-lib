@@ -27,6 +27,9 @@ import java.util.concurrent.Callable;
  * gradually increasing the wait-time between retries as determined by the
  * implementation of {@link #calculateRetryDelay(int, long, double)}.
  * <p/>
+ * A task is considered successful if a call to {@link #callImpl(int)} doesn't
+ * throw an exception.
+ * <p/>
  * After the last retry attempt OR if {@link #canRetry(Exception, int, int)}
  * returns <code>false</code>, the task is considered to have failed and the
  * root exception is propagated to the caller in the form of a wrapping
@@ -38,7 +41,7 @@ import java.util.concurrent.Callable;
  * @author Riyad Kalla (software@thebuzzmedia.com)
  * 
  * @param <V>
- *            The type of the object that {@link #callImpl()} implementation
+ *            The type of the object that {@link #callImpl(int)} implementation
  *            will return to {@link #call()} and {@link #call()} will return to
  *            the caller. In short, the result type of this task.
  */
@@ -103,14 +106,14 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	}
 
 	/**
-	 * Implemented to retry the logic implemented by {@link #callImpl()}
+	 * Implemented to retry the logic implemented by {@link #callImpl(int)}
 	 * automatically if it fails with an exception and we are not on our last
 	 * retry attempt and {@link #canRetry(Exception, int, int)} returns
 	 * <code>true</code>.
 	 * <p/>
 	 * This method is <code>final</code> to avoid corruption of the retry logic.
-	 * Please implement all task logic in {@link #callImpl()} and should-retry
-	 * logic in {@link #canRetry(Exception, int, int)}.
+	 * Please implement all task logic in {@link #callImpl(int)} and
+	 * should-retry logic in {@link #canRetry(Exception, int, int)}.
 	 * 
 	 * @throws RuntimeException
 	 *             if the executing {@link Thread} is interrupted while sleeping
@@ -126,10 +129,14 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 		V result = null;
 		boolean success = false;
 
-		// Attempt the call command up to retryCount times before failing.
-		for (int i = 1; !success && i <= retryCount; i++) {
+		/*
+		 * i=0 is the first attempt at running the task, i=1 through
+		 * i=retryCount are the retry attempts indicated by the values given by
+		 * the caller.
+		 */
+		for (int i = 0; !success && i <= retryCount; i++) {
 			try {
-				result = callImpl();
+				result = callImpl(i);
 
 				/*
 				 * In case this is an operation that returns no value, we assume
@@ -139,7 +146,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 				success = true;
 			} catch (Exception e) {
 				// Ensure we have retry attempts left and we can retry
-				if (i < retryCount && canRetry(e, i, retryCount)) {
+				if (i <= retryCount && canRetry(e, i, retryCount)) {
 					try {
 						// Calculate how long to sleep based on our last sleep.
 						currentRetryDelay = calculateRetryDelay(i,
@@ -162,17 +169,17 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 				String message;
 
 				/*
-				 * This was either our last attempt at retrying the task OR a
-				 * serious exception occurred. Tailor the message to be more
-				 * descript.
+				 * We either retried the task every time or canRetry returned
+				 * false.
 				 */
-				if (i == (retryCount - 1))
+				if (i >= retryCount)
 					message = "Failed to execute task ["
 							+ this.getClass().getName() + "] after retrying "
 							+ retryCount + " times.";
 				else
-					message = "An exception occurred while trying to execute task ["
-							+ this.getClass().getName() + "]";
+					message = "Failed to execute task ["
+							+ this.getClass().getName()
+							+ "] after canRetry(...) returned false.";
 
 				// Throw the exception up to the caller to do something with it.
 				throw new RuntimeException(message, e);
@@ -208,27 +215,6 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	}
 
 	/**
-	 * The actual task logic. This will be invoked automatically by
-	 * {@link #call()} every time this logic fails (which is indicated by
-	 * throwing an exception). If the call succeeds then the return value from
-	 * this method is passed to {@link #call()} and returned to the caller.
-	 * <p/>
-	 * Implementations of this method are considered "successful" if no
-	 * {@link Exception} is thrown. It is not necessary for an implementation to
-	 * return a non-<code>null</code> value to be considered successful.
-	 * 
-	 * @return the result of the operation or <code>null</code> if this
-	 *         operation returns no value.
-	 * 
-	 * @throws Exception
-	 *             if any {@link Exception} is thrown by the implementation
-	 *             indicating that the task has failed and can be potentially
-	 *             retried (depending on what
-	 *             {@link #canRetry(Exception, int, int)} returns).
-	 */
-	protected abstract V callImpl() throws Exception;
-
-	/**
 	 * Used to determine if, based on the given {@link Exception}, the task can
 	 * be safely retried.
 	 * <p/>
@@ -237,7 +223,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	 * (e.g. {@link IOException}) and should not be retried.
 	 * 
 	 * @param e
-	 *            The exception that a call to {@link #callImpl()} just
+	 *            The exception that a call to {@link #callImpl(int)} just
 	 *            generated.
 	 * @param currentRetryCount
 	 *            The current retry attempt. This value will always be &lt; (
@@ -256,4 +242,32 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	 */
 	protected abstract boolean canRetry(Exception e, int currentRetryCount,
 			int maxRetryCount);
+
+	/**
+	 * The actual task logic.
+	 * <p/>
+	 * This will be invoked automatically by {@link #call()} every time this
+	 * method throws an exception (indicating a failure). If the call succeeds
+	 * then the return value from this method is passed to {@link #call()} and
+	 * returned to the caller.
+	 * <p/>
+	 * Implementations of this method are considered "successful" if no
+	 * {@link Exception} is thrown. It is not necessary for an implementation to
+	 * return a non-<code>null</code> value to be considered successful.
+	 * 
+	 * @param retryAttempt
+	 *            The current retry attempt for running this method. This value
+	 *            starts at 0 (indicating the first run) and ends at value
+	 *            <code>retryCount</code>.
+	 * 
+	 * @return the result of the operation or <code>null</code> if this
+	 *         operation returns no value.
+	 * 
+	 * @throws Exception
+	 *             if any {@link Exception} is thrown by the implementation
+	 *             indicating that the task has failed and can be potentially
+	 *             retried (depending on what
+	 *             {@link #canRetry(Exception, int, int)} returns).
+	 */
+	protected abstract V callImpl(int retryAttempt) throws Exception;
 }

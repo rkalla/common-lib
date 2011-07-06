@@ -57,7 +57,7 @@ public class AbstractRetryableTaskTest {
 		}
 
 		@Override
-		protected Object callImpl() throws Exception {
+		protected Object callImpl(int retryAttempt) throws Exception {
 			if (retry++ < 5)
 				throw new RuntimeException("Fake exception to force retry!");
 			else {
