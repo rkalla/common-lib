@@ -117,15 +117,15 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	 * 
 	 * @throws RuntimeException
 	 *             if the executing {@link Thread} is interrupted while sleeping
-	 *             and waiting to retry a failed task or if the task has been
-	 *             retried <code>retryCount</code> times and failed every time
-	 *             or if {@link #canRetry(Exception, int, int)} returns
+	 *             and waiting to retry a failed task.
+	 * @throws FailedTaskException
+	 *             if the task has been retried <code>retryCount</code> times
+	 *             and failed every time or if
+	 *             {@link #canRetry(Exception, int, int)} returns
 	 *             <code>false</code> indicating that the task should not be
-	 *             retried. The resulting {@link RuntimeException} will be
-	 *             wrapping the source exception that can be retrieved with
-	 *             {@link RuntimeException#getCause()}.
+	 *             retried.
 	 */
-	public final V call() throws Exception {
+	public final V call() throws RuntimeException, FailedTaskException {
 		V result = null;
 		boolean success = false;
 
@@ -182,7 +182,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 							+ "] after canRetry(...) returned false.";
 
 				// Throw the exception up to the caller to do something with it.
-				throw new RuntimeException(message, e);
+				throw new FailedTaskException(message, e);
 			}
 		}
 
