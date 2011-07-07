@@ -18,6 +18,8 @@ package com.thebuzzmedia.common.concurrent;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import com.thebuzzmedia.common.concurrent.FailedTaskException.FailureType;
+
 /**
  * Class used to implement an automatically retryable {@link Callable}.
  * <p/>
@@ -53,6 +55,8 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	private int retryCount;
 	private long currentRetryDelay;
 	private double retryDelayFactor;
+
+	private boolean stopped;
 
 	/**
 	 * Create a task that will be retried {@link #DEFAULT_RETRY_COUNT} number of
@@ -103,6 +107,16 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 		this.retryCount = retryCount;
 		this.currentRetryDelay = initialRetryDelay;
 		this.retryDelayFactor = retryDelayFactor;
+
+		this.stopped = false;
+	}
+
+	public void stop() {
+		stopped = true;
+	}
+
+	public boolean isStopped() {
+		return stopped;
 	}
 
 	/**
@@ -134,7 +148,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 		 * i=retryCount are the retry attempts indicated by the values given by
 		 * the caller.
 		 */
-		for (int i = 0; !success && i <= retryCount; i++) {
+		for (int i = 0; !stopped && !success && i <= retryCount; i++) {
 			try {
 				result = callImpl(i);
 
@@ -167,22 +181,26 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 				}
 
 				String message;
+				FailureType type;
 
 				/*
 				 * We either retried the task every time or canRetry returned
 				 * false.
 				 */
-				if (i >= retryCount)
+				if (i >= retryCount) {
 					message = "Failed to execute task ["
 							+ this.getClass().getName() + "] after retrying "
 							+ retryCount + " times.";
-				else
+					type = FailureType.MAX_RETRY;
+				} else {
 					message = "Failed to execute task ["
 							+ this.getClass().getName()
 							+ "] after canRetry(...) returned false.";
+					type = FailureType.CAN_RETRY;
+				}
 
 				// Throw the exception up to the caller to do something with it.
-				throw new FailedTaskException(message, e);
+				throw new FailedTaskException(type, message, e);
 			}
 		}
 

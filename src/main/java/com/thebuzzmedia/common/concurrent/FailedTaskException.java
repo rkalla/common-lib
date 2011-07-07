@@ -11,7 +11,18 @@ package com.thebuzzmedia.common.concurrent;
 public class FailedTaskException extends RuntimeException {
 	private static final long serialVersionUID = 5871849147423444823L;
 
-	public FailedTaskException(String message, Exception cause) {
+	public enum FailureType {
+		MAX_RETRY, CAN_RETRY;
+	}
+
+	private FailureType type;
+
+	public FailedTaskException(FailureType type, String message, Exception cause) {
 		super(message, cause);
+		this.type = type;
+	}
+
+	public FailureType getFailureType() {
+		return type;
 	}
 }
