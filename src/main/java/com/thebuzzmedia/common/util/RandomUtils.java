@@ -17,8 +17,12 @@ package com.thebuzzmedia.common.util;
 
 import java.util.Random;
 
-// QUICK REF: http://keepass.info/help/base/pwgenerator.html
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.0
+ */
 public class RandomUtils {
+	// QUICK REF: http://keepass.info/help/base/pwgenerator.html
 	public static final char[] NUMBER_ALPHABET = { '0', '1', '2', '3', '4',
 			'5', '6', '7', '8', '9' };
 	public static final char[] ASCII_SYMBOL_ALPHABET = { '!', '\"', '#', '$',

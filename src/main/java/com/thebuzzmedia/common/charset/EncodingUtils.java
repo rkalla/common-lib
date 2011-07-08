@@ -22,6 +22,10 @@ import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 1.1
+ */
 public class EncodingUtils {
 	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.encode.maxBufferSize";
 

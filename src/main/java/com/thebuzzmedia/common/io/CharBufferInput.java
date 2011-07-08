@@ -18,6 +18,10 @@ package com.thebuzzmedia.common.io;
 import java.io.IOException;
 import java.nio.CharBuffer;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.2
+ */
 public class CharBufferInput extends AbstractInput<CharBuffer, char[]> {
 	public CharBufferInput(CharBuffer source) throws IllegalArgumentException {
 		this(source, source.remaining());

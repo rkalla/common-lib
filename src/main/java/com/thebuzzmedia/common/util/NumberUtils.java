@@ -15,6 +15,10 @@
  */
 package com.thebuzzmedia.common.util;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 1.0
+ */
 public class NumberUtils {
 	/**
 	 * Used to parse a <code>byte</code> numeric value (-128 to 127) from a

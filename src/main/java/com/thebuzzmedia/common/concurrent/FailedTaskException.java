@@ -7,6 +7,7 @@ package com.thebuzzmedia.common.concurrent;
  * <code>false</code>.
  * 
  * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.3
  */
 public class FailedTaskException extends RuntimeException {
 	private static final long serialVersionUID = 5871849147423444823L;

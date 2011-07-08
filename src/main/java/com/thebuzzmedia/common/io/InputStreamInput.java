@@ -18,6 +18,10 @@ package com.thebuzzmedia.common.io;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.2
+ */
 public class InputStreamInput extends AbstractInput<InputStream, byte[]> {
 	public InputStreamInput(InputStream source) throws IllegalArgumentException {
 		this(source, UNSPECIFIED);

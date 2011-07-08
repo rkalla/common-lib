@@ -18,6 +18,10 @@ package com.thebuzzmedia.common.io;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.2
+ */
 public class ByteBufferInput extends AbstractInput<ByteBuffer, byte[]> {
 	public ByteBufferInput(ByteBuffer source) throws IllegalArgumentException {
 		this(source, source.remaining());

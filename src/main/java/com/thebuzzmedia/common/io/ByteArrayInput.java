@@ -17,6 +17,10 @@ package com.thebuzzmedia.common.io;
 
 import java.io.IOException;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.2
+ */
 public class ByteArrayInput extends AbstractInput<byte[], byte[]> {
 	public ByteArrayInput(byte[] source) throws IllegalArgumentException {
 		this(source, 0, source.length);

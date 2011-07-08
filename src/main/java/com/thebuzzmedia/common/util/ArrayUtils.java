@@ -15,6 +15,12 @@
  */
 package com.thebuzzmedia.common.util;
 
+/**
+ * Huge collection of efficient array-based operations.
+ * 
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 1.0
+ */
 public class ArrayUtils {
 	public static final int INVALID_INDEX = -1;
 

@@ -17,6 +17,10 @@ package com.thebuzzmedia.common.io;
 
 import java.io.IOException;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.2
+ */
 public abstract class AbstractInput<ST, BT> implements IInput<ST, BT> {
 	/**
 	 * Position within the wrapped <code>source</code> where the first read

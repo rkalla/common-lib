@@ -46,6 +46,8 @@ import com.thebuzzmedia.common.concurrent.FailedTaskException.FailureType;
  *            The type of the object that {@link #callImpl(int)} implementation
  *            will return to {@link #call()} and {@link #call()} will return to
  *            the caller. In short, the result type of this task.
+ * 
+ * @since 2.0
  */
 public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	public static final int DEFAULT_RETRY_COUNT = 5;

@@ -16,7 +16,23 @@
 package com.thebuzzmedia.common.io;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
+/**
+ * @param <ST>
+ *            The type of the source that this {@link IInput} is wrapping; for
+ *            example {@link InputStream}, {@link ByteBuffer}, etc.
+ * @param <BT>
+ *            The type of the primitive read buffer that will contain data read
+ *            from the given source. This is typically either
+ *            <code>byte[]</code> or <code>char[]</code> (for reading from
+ *            binary or character-based sources), but it could easily be any
+ *            other type you want to implement.
+ * 
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.2
+ */
 public interface IInput<ST, BT> {
 	public static final int UNSPECIFIED = -1;
 

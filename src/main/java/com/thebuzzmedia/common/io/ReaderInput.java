@@ -18,6 +18,10 @@ package com.thebuzzmedia.common.io;
 import java.io.IOException;
 import java.io.Reader;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.2
+ */
 public class ReaderInput extends AbstractInput<Reader, char[]> {
 	public ReaderInput(Reader source) throws IllegalArgumentException {
 		this(source, UNSPECIFIED);

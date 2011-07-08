@@ -17,6 +17,10 @@ package com.thebuzzmedia.common.io;
 
 import java.io.IOException;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.2
+ */
 public class CharArrayInput extends AbstractInput<char[], char[]> {
 	public CharArrayInput(char[] source) throws IllegalArgumentException {
 		this(source, 0, source.length);

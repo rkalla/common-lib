@@ -6,6 +6,10 @@ import java.nio.charset.Charset;
 
 import com.thebuzzmedia.common.charset.DecodingUtils;
 
+/**
+ * @author Riyad Kalla (software@thebuzzmedia.com)
+ * @since 2.3
+ */
 public class StreamUtils {
 	public static final String MAX_BUFFER_SIZE_PROPERTY_NAME = "tbm.common.stream.maxBufferSize";
 
