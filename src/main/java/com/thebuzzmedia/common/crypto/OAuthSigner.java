@@ -195,7 +195,10 @@ public class OAuthSigner {
 			}
 		}
 
-		// URL-Encode all the name/value pairs.
+		/*
+		 * Normalize name/value pairs according to OAuth spec:
+		 * http://tools.ietf.org/html/rfc5849#section-3.4.1.3.2
+		 */
 		for (int i = 0, size = paramList.size(); i < size; i++) {
 			String[] pair = paramList.get(i);
 
@@ -217,7 +220,10 @@ public class OAuthSigner {
 			}
 		}
 
-		// Now sort the list of encoded name/value pairs
+		/*
+		 * Sort the list of name/value pairs according to OAuth spec:
+		 * http://tools.ietf.org/html/rfc5849#section-3.4.1.3.2
+		 */
 		Collections.sort(paramList, COMPARATOR);
 
 		this.paramList = paramList;
@@ -257,9 +263,9 @@ public class OAuthSigner {
 		buffer.append(baseURI).append('&');
 
 		/*
-		 * Iterate over all the sorted pairings, concat'ing the names and values
-		 * with each other as "name=value" and then each pairing with each other
-		 * with a '&' character.
+		 * Concatenate all name/value pairs together in name=value pairings,
+		 * then append them all to each other using '&' separators as OAuth
+		 * requires: http://tools.ietf.org/html/rfc5849#section-3.4.1.3.2
 		 */
 		for (int i = 0, size = paramList.size(); i < size; i++) {
 			String[] pair = paramList.get(i);
