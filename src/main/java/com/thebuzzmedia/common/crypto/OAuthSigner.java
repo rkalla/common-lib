@@ -390,7 +390,7 @@ public class OAuthSigner {
 
 		// Filter the param list if a filter was provided.
 		if (filter != null) {
-			for (int i = 0, size = paramList.size(); i < size; i++) {
+			for (int i = 0; i < paramList.size(); i++) {
 				String[] pair = paramList.get(i);
 
 				if (pair != null
