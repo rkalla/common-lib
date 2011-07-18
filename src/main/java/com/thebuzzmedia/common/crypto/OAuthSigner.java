@@ -32,12 +32,8 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.thebuzzmedia.common.charset.EncodingUtils;
 import com.thebuzzmedia.common.util.Base64;
-
-/*
- * TODO: See if this class can be optimized by using streams to go from Strings
- * to bytes and somehow avoid expensive ops.
- */
 
 /**
  * Class used to provide OAuth-compatible functionality around the construction
@@ -426,8 +422,8 @@ public class OAuthSigner {
 		 * http://tools.ietf.org/html/rfc5849#section-3.4.1.3.2
 		 */
 		Collections.sort(paramList, COMPARATOR);
-
 		this.paramList = paramList;
+
 		return this;
 	}
 
@@ -549,15 +545,23 @@ public class OAuthSigner {
 			if (tokenKey != null)
 				keyBuffer.append(URLEncoder.encode(tokenKey, UTF8));
 
-			SecretKey key = new SecretKeySpec(keyBuffer.toString().getBytes(),
-					algorithm.name);
+			char[] charBuffer = new char[keyBuffer.length()];
+			keyBuffer.getChars(0, charBuffer.length, charBuffer, 0);
+
+			// String.getBytes does ISO-8859-1 conversion, we want UTF8.
+			byte[] byteBuffer = EncodingUtils.encode(charBuffer);
+			SecretKey key = new SecretKeySpec(byteBuffer, algorithm.name);
 			Mac mac = Mac.getInstance(algorithm.name);
 
 			// Init with the secret key.
 			mac.init(key);
 
+			charBuffer = new char[buffer.length()];
+			buffer.getChars(0, charBuffer.length, charBuffer, 0);
+			byteBuffer = EncodingUtils.encode(charBuffer);
+
 			// Generate the actual HMAC signature.
-			hash = mac.doFinal(buffer.toString().getBytes());
+			hash = mac.doFinal(byteBuffer);
 		} catch (Exception e) {
 			throw new RuntimeException("Unable to generate an "
 					+ algorithm.name + " signature with the given values.", e);
