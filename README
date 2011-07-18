@@ -4,6 +4,59 @@ http://www.thebuzzmedia.com/software/common-lib-common-java-utility-library/
 
 Changelog
 ---------
+2.3
+	* Added StreamUtils to make processing streams for their content easier.
+	
+	* Added FailedTaskException to be able to reported the reason of a failed
+	task in more depth to the caller. Now AbstractRetryableTask is specified to
+	throw RuntimeExceptions in the case of fundamental errors (like thread 
+	interruption) but to throw this new type any time a task fails to complete.
+	
+	* Modified AbstractRetryableTask behavior when a sleeping thread is interrupted
+	by having it gracefully exit instead of throwing a RuntimeException.
+	
+	A task being interrupted is an expected event if the task is being executed by
+	an ExecutorService that just had shutdownNow() called on it; throwing an
+	exception in response to this event was inappropriate.
+	 
+	* In addition to the interruption behavior, AbstractRetryableTask was
+	enhanced by adding an "isInterrupted()" state so the caller can tell if their
+	task completed normally OR if the executing thread was interrupted and that
+	is why the call() method returned. 
+	
+	If the caller cares, they can choose to retry the task (overcoming the interruption)
+	or if they expected the interruption (shutting down an ExecutorService) then 
+	they can gracefully continue exiting.
+	
+	* Modified AbstractRetryableTask to retry a default of 5 times instead of 3.
+	
+	* Added "retryAttempt" value to callImpl making it easier for call implementation
+	to tell if they have run before and which attempt they are on.
+	
+	* Corrected the retry count logic in AbsractRetryableTask.
+	
+	* Added OAuthSigner class which provides core OAuth-spec-compliant functionality
+	like helping with the signature/HMAC generation.
+	
+	* OAuthSigner.Algorithm defines support for MD5, SHA-1, SHA-256 and SHA-512
+	hashing when generating signatures.
+	
+	* Added iHarder's Base64 implementation (required by OAuthUtils)
+	http://iharder.sourceforge.net/current/java/base64/
+	
+	This is a superior Base64 Java implementation utilized by the OAuthUtils class
+	and I wanted to avoid shipping a new JAR dependency. Since iHarder is only a
+	single, well-designed class with a wide-open license, I felt it was easier 
+	(and more convenient) to simply add it to the library as-is to the benefit 
+	of anyone else needing a Base64 implementation.
+	
+	The class is clearly documented as being directly transplanted from the 
+	iHarder Base64 project; all credit should be directed to Robert Harder
+	(rob@iharder.net) for this class.
+	
+	* Changed "tbm.common.util.decode.maxBufferSize" and "tbm.common.util.encode.maxBufferSize"
+	property names by dropping the ".util" middle portion.
+
 2.2
 	* Added IInput input definition.
 	
@@ -16,8 +69,14 @@ Changelog
 	each other directly, which is why IInputs were created.
 	
 	IInputs also allow for the controlling or "bounding" of accessible data from
-	an underlying source as well as partially refilling a buffer with fresh
-	content while maintaining existing data in the buffer. 
+	an underlying source as well as automatically filling the read buffer from
+	the underlying source (regardless of type) making IInputs incredibly ease to
+	use as extremely efficient input sources. 
+	
+	* IInput implementations are as efficient as the most efficient read operations
+	from InputStream or NIO Buffer classes in that you get direct access to the
+	read buffer used by the stream to pull in data from it's underlying source;
+	there is no need to copy the contents to a second construct for use.
 	
 	* Default IInput implementations provided for all popular sources:
 		* InputStreamInput	java.io.InputStream source with byte[] buffer
