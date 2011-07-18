@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.thebuzzmedia.common.util.Base64;
+
+/*
+ * TODO: See if this class can be optimized by using streams to go from Strings
+ * to bytes and somehow avoid expensive ops.
+ */
 
 /**
  * Class used to provide OAuth-compatible functionality around the construction
@@ -90,17 +96,41 @@ public class OAuthSigner {
 	 * supports being used to hash the resultant signature base string.
 	 */
 	public enum Algorithm {
-		MD5("HmacMD5"), SHA1("HmacSHA1"), SHA256("HmacSHA256"), SHA512(
-				"HmacSHA512");
+		MD5("HmacMD5", "MD5"), SHA1("HmacSHA1", "SHA1"), SHA256("HmacSHA256",
+				"SHA256"), SHA512("HmacSHA512", "SHA512");
+
+		private static final Map<String, Algorithm> SHORT_NAME_MAP = new HashMap<String, OAuthSigner.Algorithm>(
+				13);
+
+		static {
+			SHORT_NAME_MAP.put(MD5.shortName, MD5);
+			SHORT_NAME_MAP.put(SHA1.shortName, SHA1);
+			SHORT_NAME_MAP.put(SHA256.shortName, SHA256);
+			SHORT_NAME_MAP.put(SHA512.shortName, SHA512);
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getShortName() {
+			return shortName;
+		}
+
+		public Algorithm forShortName(String shortName) {
+			return SHORT_NAME_MAP.get(shortName);
+		}
 
 		/**
 		 * Defined to match the "algorithm" argument understood by the
 		 * {@link Mac} class in the JDK.
 		 */
 		private String name;
+		private String shortName;
 
-		private Algorithm(String name) {
+		private Algorithm(String name, String shortName) {
 			this.name = name;
+			this.shortName = shortName;
 		}
 	}
 
@@ -533,12 +563,23 @@ public class OAuthSigner {
 					+ algorithm.name + " signature with the given values.", e);
 		}
 
-		/*
-		 * Per the OAuth HMAC spec, return the hash Base64 encoded or null if we
-		 * failed to create one:
-		 * http://tools.ietf.org/html/rfc5849#section-3.4.2
-		 */
-		return (hash == null ? null : Base64.encodeBytes(hash));
+		String signature = null;
+
+		try {
+			/*
+			 * Per the OAuth spec
+			 * (http://tools.ietf.org/html/rfc5849#section-3.4.2) the hash must
+			 * be Base64-encoded using a URL-safe variant of Base64
+			 * (http://tools.ietf.org/html/rfc2045#section-6.8).
+			 */
+			signature = (hash == null ? null : Base64.encodeBytes(hash,
+					Base64.URL_SAFE));
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Unable to Base64 encode (URL safe) the given hash.", e);
+		}
+
+		return signature;
 	}
 
 	/**
