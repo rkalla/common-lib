@@ -96,29 +96,29 @@ public class OAuthSigner {
 	 * supports being used to hash the resultant signature base string.
 	 */
 	public enum Algorithm {
-		MD5("HmacMD5", "MD5"), SHA1("HmacSHA1", "SHA1"), SHA256("HmacSHA256",
-				"SHA256"), SHA512("HmacSHA512", "SHA512");
+		MD5("HmacMD5", "MD5"), SHA1("HmacSHA1", "SHA-1"), SHA256("HmacSHA256",
+				"SHA-256"), SHA512("HmacSHA512", "SHA-512");
 
-		private static final Map<String, Algorithm> SHORT_NAME_MAP = new HashMap<String, OAuthSigner.Algorithm>(
+		private static final Map<String, Algorithm> FRIENDLY_NAME_MAP = new HashMap<String, OAuthSigner.Algorithm>(
 				13);
 
 		static {
-			SHORT_NAME_MAP.put(MD5.shortName, MD5);
-			SHORT_NAME_MAP.put(SHA1.shortName, SHA1);
-			SHORT_NAME_MAP.put(SHA256.shortName, SHA256);
-			SHORT_NAME_MAP.put(SHA512.shortName, SHA512);
+			FRIENDLY_NAME_MAP.put(MD5.friendlyName, MD5);
+			FRIENDLY_NAME_MAP.put(SHA1.friendlyName, SHA1);
+			FRIENDLY_NAME_MAP.put(SHA256.friendlyName, SHA256);
+			FRIENDLY_NAME_MAP.put(SHA512.friendlyName, SHA512);
 		}
 
 		public String getName() {
 			return name;
 		}
 
-		public String getShortName() {
-			return shortName;
+		public String getFriendlyName() {
+			return friendlyName;
 		}
 
-		public Algorithm forShortName(String shortName) {
-			return SHORT_NAME_MAP.get(shortName);
+		public Algorithm forShortName(String friendlyName) {
+			return FRIENDLY_NAME_MAP.get(friendlyName);
 		}
 
 		/**
@@ -126,11 +126,11 @@ public class OAuthSigner {
 		 * {@link Mac} class in the JDK.
 		 */
 		private String name;
-		private String shortName;
+		private String friendlyName;
 
-		private Algorithm(String name, String shortName) {
+		private Algorithm(String name, String friendlyName) {
 			this.name = name;
-			this.shortName = shortName;
+			this.friendlyName = friendlyName;
 		}
 	}
 
