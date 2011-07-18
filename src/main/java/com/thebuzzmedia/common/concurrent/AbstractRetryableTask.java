@@ -59,6 +59,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 	private double retryDelayFactor;
 
 	private boolean stopped;
+	private boolean interrupted;
 
 	/**
 	 * Create a task that will be retried {@link #DEFAULT_RETRY_COUNT} number of
@@ -111,6 +112,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 		this.retryDelayFactor = retryDelayFactor;
 
 		this.stopped = false;
+		this.interrupted = false;
 	}
 
 	public void stop() {
@@ -119,6 +121,10 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 
 	public boolean isStopped() {
 		return stopped;
+	}
+
+	public boolean isInterrupted() {
+		return interrupted;
 	}
 
 	/**
@@ -150,7 +156,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 		 * i=retryCount are the retry attempts indicated by the values given by
 		 * the caller.
 		 */
-		for (int i = 0; !stopped && !success && i <= retryCount; i++) {
+		for (int i = 0; !stopped && !interrupted && !success && i <= retryCount; i++) {
 			try {
 				result = callImpl(i);
 
@@ -177,10 +183,9 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 						 * sleeping threads waiting to be retried, being
 						 * interrupted is a perfectly valid use case if the app
 						 * is shutting down or being restarted, so respond to
-						 * this favorably (return null) as opposed to throwing
-						 * exceptions.
+						 * this gracefully instead of throwing an exception.
 						 */
-						return null;
+						interrupted = true;
 					}
 
 					// Try again
