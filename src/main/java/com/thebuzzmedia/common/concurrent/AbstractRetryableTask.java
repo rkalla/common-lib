@@ -180,7 +180,7 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 						 * this favorably (return null) as opposed to throwing
 						 * exceptions.
 						 */
-						return result;
+						return null;
 					}
 
 					// Try again
