@@ -171,11 +171,16 @@ public abstract class AbstractRetryableTask<V> implements Callable<V> {
 						// Sleep the current thread for that amount.
 						Thread.sleep(currentRetryDelay);
 					} catch (InterruptedException ex) {
-						throw new RuntimeException(
-								"The sleeping thread executing a task of type ["
-										+ this.getClass().getName()
-										+ "] was interrupted while waiting to retry the task again.",
-								e);
+						/*
+						 * Calling ExecutorService.shutdownNow() interrupts all
+						 * pending threads, if we currently have a number of
+						 * sleeping threads waiting to be retried, being
+						 * interrupted is a perfectly valid use case if the app
+						 * is shutting down or being restarted, so respond to
+						 * this favorably (return null) as opposed to throwing
+						 * exceptions.
+						 */
+						return result;
 					}
 
 					// Try again
