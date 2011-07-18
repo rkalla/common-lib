@@ -104,6 +104,10 @@ public class OAuthSigner {
 			FRIENDLY_NAME_MAP.put(SHA256.friendlyName, SHA256);
 			FRIENDLY_NAME_MAP.put(SHA512.friendlyName, SHA512);
 		}
+		
+		public static Algorithm forFriendlyName(String friendlyName) {
+			return FRIENDLY_NAME_MAP.get(friendlyName);
+		}
 
 		public String getName() {
 			return name;
@@ -111,10 +115,6 @@ public class OAuthSigner {
 
 		public String getFriendlyName() {
 			return friendlyName;
-		}
-
-		public Algorithm forShortName(String friendlyName) {
-			return FRIENDLY_NAME_MAP.get(friendlyName);
 		}
 
 		/**
