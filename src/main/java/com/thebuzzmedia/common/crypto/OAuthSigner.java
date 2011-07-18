@@ -104,7 +104,7 @@ public class OAuthSigner {
 			FRIENDLY_NAME_MAP.put(SHA256.friendlyName, SHA256);
 			FRIENDLY_NAME_MAP.put(SHA512.friendlyName, SHA512);
 		}
-		
+
 		public static Algorithm forFriendlyName(String friendlyName) {
 			return FRIENDLY_NAME_MAP.get(friendlyName);
 		}
@@ -235,13 +235,19 @@ public class OAuthSigner {
 					"requestURL cannot be null or empty");
 
 		/*
-		 * Code copied from Matthias Kaeppler's signpost impl:
+		 * Code originated from Matthias Kaeppler's signpost impl:
 		 * https://github.com
 		 * /kaeppler/signpost/blob/master/signpost-core/src/main
 		 * /java/oauth/signpost/signature/SignatureBaseString.java
 		 */
 		URI uri = new URI(requestURL);
-		String scheme = uri.getScheme().toLowerCase();
+		String scheme = uri.getScheme();
+
+		if (scheme == null)
+			scheme = "";
+		else
+			scheme = scheme.toLowerCase();
+
 		String authority = uri.getAuthority().toLowerCase();
 		boolean dropPort = (scheme.equals("http") && uri.getPort() == 80)
 				|| (scheme.equals("https") && uri.getPort() == 443);
