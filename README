@@ -41,6 +41,16 @@ Changelog
 	* OAuthSigner.Algorithm defines support for MD5, SHA-1, SHA-256 and SHA-512
 	hashing when generating signatures.
 	
+	* Added the "escape" sub-package with direct copies of the 4 escaping class
+	implementations from Google's API Client Library. 
+	
+	This was necessary for the OAuthSigner to generate correct signatures, using
+	the embedded URLEncoder from the JDK does not perform the encoding that the
+	OAuth spec requires (slightly modified version of RFC-3629).
+	
+	The 4 classes were pulled in instead of adding the 240kb JAR as a dependency
+	for this library.
+	
 	* Added iHarder's Base64 implementation (required by OAuthUtils)
 	http://iharder.sourceforge.net/current/java/base64/
 	

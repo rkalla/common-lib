@@ -15,8 +15,8 @@
  */
 
 /**
- * Copied directly from Google's GDATA client to get an implementation of 
- * correct OAuth-compliant encoding.
+ * Copied directly from Google's <a href="http://code.google.com/p/google-api-java-client/downloads/list">new GDATA client library</a> 
+ * to get an implementation of correct OAuth-compliant encoding.
  * <p/>
  * These classes were copied directly so as to avoid pulling in the 240kb
  * dependency JAR, blowing this library up to 20x it's current size. 

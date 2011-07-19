@@ -18,7 +18,6 @@ package com.thebuzzmedia.common.crypto;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +32,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.thebuzzmedia.common.charset.EncodingUtils;
+import com.thebuzzmedia.common.escape.PercentEscaper;
 import com.thebuzzmedia.common.util.Base64;
 
 /**
@@ -61,6 +61,13 @@ import com.thebuzzmedia.common.util.Base64;
  * This class can be used in a builder-pattern method, specifying the different
  * values to be signed on the fly or all passed to the constructor. This was
  * done for convenience.
+ * <p/>
+ * To ensure compliance with OAuth's unique encoding requirements (similar to <a
+ * href="http://tools.ietf.org/html/rfc3629">RFC-3629</a> with 3 minor
+ * modifications) this class utilizes an embedded copy of the
+ * <code>PercentEscaper</code> from the <a
+ * href="http://code.google.com/p/google-api-java-client/">Google API Client
+ * Library</a> without adding the 240kb dependency to this library.
  * 
  * @author Riyad Kalla (software@thebuzzmedia.com)
  * @since 2.3
@@ -84,7 +91,8 @@ public class OAuthSigner {
 	 */
 	public static final int VALUE_INDEX = 1;
 
-	private static final String UTF8 = "UTF-8";
+	private static final PercentEscaper ENCODER = new PercentEscaper("-._~",
+			false);
 	private static final ParameterComparator COMPARATOR = new ParameterComparator();
 
 	/**
@@ -188,8 +196,7 @@ public class OAuthSigner {
 					"requestMethod cannot be null or empty");
 
 		try {
-			this.requestMethod = URLEncoder.encode(requestMethod.toUpperCase(),
-					UTF8);
+			this.requestMethod = ENCODER.escape(requestMethod.toUpperCase());
 		} catch (Exception e) {
 			throw new IllegalArgumentException("requestMethod ["
 					+ requestMethod + "] could not be URL encoded.", e);
@@ -268,8 +275,7 @@ public class OAuthSigner {
 
 		// we know that there is no query and no fragment here.
 		try {
-			this.baseURI = URLEncoder.encode(scheme + "://" + authority + path,
-					UTF8);
+			this.baseURI = ENCODER.escape(scheme + "://" + authority + path);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("requestURL [" + requestURL
 					+ "] could not be successfully URL encoded.", e);
@@ -285,8 +291,8 @@ public class OAuthSigner {
 	 * 3.4.1.3.2</a> of the OAuth spec. This method eventually delegates to
 	 * {@link #params(List, ParamFilter)}.
 	 * <p/>
-	 * Signature generation automatically skips name/value pairs that either
-	 * have a null name or a null value.
+	 * Signature generation automatically skips pairings that have a null or
+	 * empty name (empty values are accepted per the OAuth spec).
 	 * <p>
 	 * Setting parameters for a signature generation is optional. If parameters
 	 * are excluded, then only the request method and base URI along with the
@@ -325,19 +331,15 @@ public class OAuthSigner {
 			Entry<String, String[]> entry = entries.next();
 			String[] values = entry.getValue();
 
-			// Skip right over empty-valued params.
+			// If there were no values, set to the empty string
 			if (values == null || values.length == 0)
-				continue;
+				values = new String[] { "" };
 
 			String name = entry.getKey();
 
 			// Process each value as a separate param.
 			for (int i = 0; i < values.length; i++) {
 				String value = values[i];
-
-				// Skip empty values
-				if (value == null || value.length() == 0)
-					continue;
 
 				// Filter name/value pair if filter provided.
 				if (filter != null && !filter.include(name, value))
@@ -365,8 +367,8 @@ public class OAuthSigner {
 	 * <code>String[]</code> values in the list, each with the same name but
 	 * different values.
 	 * <p/>
-	 * Signature generation automatically skips name/value pairs that either
-	 * have a null name or a null value.
+	 * Signature generation automatically skips pairings that have a null or
+	 * empty name (empty values are accepted per the OAuth spec).
 	 * <p>
 	 * Setting parameters for a signature generation is optional. If parameters
 	 * are excluded, then only the request method and base URI along with the
@@ -406,16 +408,14 @@ public class OAuthSigner {
 		for (int i = 0, size = paramList.size(); i < size; i++) {
 			String[] pair = paramList.get(i);
 
-			/*
-			 * Only do the encode operation for the name OR value if neither is
-			 * null.
-			 */
-			if (pair[NAME_INDEX] != null && pair[VALUE_INDEX] != null) {
+			// Ensure the name is non-null or empty (value can be either)
+			if (pair[NAME_INDEX] != null && pair[NAME_INDEX].length() > 0) {
 				try {
-					pair[NAME_INDEX] = URLEncoder
-							.encode(pair[NAME_INDEX], UTF8);
-					pair[VALUE_INDEX] = URLEncoder.encode(pair[VALUE_INDEX],
-							UTF8);
+					pair[NAME_INDEX] = ENCODER.escape(pair[NAME_INDEX]);
+
+					// Ensure it is not null before encoding.
+					if (pair[VALUE_INDEX] != null)
+						pair[VALUE_INDEX] = ENCODER.escape(pair[VALUE_INDEX]);
 				} catch (Exception e) {
 					e.printStackTrace();
 					// no-op, continue to next pair.
@@ -508,14 +508,8 @@ public class OAuthSigner {
 			throw new IllegalArgumentException(
 					"secretKey cannot be null or empty");
 
+		String paramString = null;
 		StringBuilder buffer = new StringBuilder(256);
-
-		/*
-		 * Begin building the signature base string according to:
-		 * http://tools.ietf.org/html/rfc5849#section-3.4.1.1
-		 */
-		buffer.append(requestMethod).append('&');
-		buffer.append(baseURI).append('&');
 
 		// Process params if there are any set
 		if (paramList != null && !paramList.isEmpty()) {
@@ -527,15 +521,41 @@ public class OAuthSigner {
 			for (int i = 0, size = paramList.size(); i < size; i++) {
 				String[] pair = paramList.get(i);
 
-				// Skip pairs with any null values
-				if (pair[NAME_INDEX] != null && pair[VALUE_INDEX] != null)
-					buffer.append(pair[NAME_INDEX]).append('=')
-							.append(pair[VALUE_INDEX]).append('&');
+				// Skip null or empty named pairs
+				if (pair[NAME_INDEX] != null && pair[NAME_INDEX].length() > 0) {
+					String value = "";
+
+					if (pair[VALUE_INDEX] != null)
+						value = pair[VALUE_INDEX];
+
+					buffer.append(pair[NAME_INDEX]).append('=').append(value)
+							.append('&');
+				}
 			}
 
 			// Trim the last spurious '&' that was appended
 			buffer.setLength(buffer.length() - 1);
+
+			try {
+				// Encode the entire string of params we just created
+				paramString = ENCODER.escape(buffer.toString());
+
+				// Reset the buffer
+				buffer.setLength(0);
+			} catch (Exception e) {
+				throw new RuntimeException(
+						"Unable to encode the generated parameter string: "
+								+ buffer.toString(), e);
+			}
 		}
+
+		/*
+		 * Begin building the signature base string according to:
+		 * http://tools.ietf.org/html/rfc5849#section-3.4.1.1
+		 */
+		buffer.append(requestMethod).append('&');
+		buffer.append(baseURI).append('&');
+		buffer.append(paramString);
 
 		byte[] hash = null;
 		StringBuilder keyBuffer = new StringBuilder(64);
@@ -545,11 +565,11 @@ public class OAuthSigner {
 			 * Begin building the key signature according to:
 			 * http://tools.ietf.org/html/rfc5849#section-3.4.2
 			 */
-			keyBuffer.append(URLEncoder.encode(secretKey, UTF8)).append('&');
+			keyBuffer.append(ENCODER.escape(secretKey)).append('&');
 
 			// Append tokenKey is included (3 legged OAuth)
 			if (tokenKey != null)
-				keyBuffer.append(URLEncoder.encode(tokenKey, UTF8));
+				keyBuffer.append(ENCODER.escape(tokenKey));
 
 			char[] charBuffer = new char[keyBuffer.length()];
 			keyBuffer.getChars(0, charBuffer.length, charBuffer, 0);
