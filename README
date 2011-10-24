@@ -51,10 +51,10 @@ Changelog
 	The 4 classes were pulled in instead of adding the 240kb JAR as a dependency
 	for this library.
 	
-	* Added iHarder's Base64 implementation (required by OAuthUtils)
+	* Added iHarder's Base64 implementation (required by OAuthSigner)
 	http://iharder.sourceforge.net/current/java/base64/
 	
-	This is a superior Base64 Java implementation utilized by the OAuthUtils class
+	This is a superior Base64 Java implementation utilized by the OAuthSigner class
 	and I wanted to avoid shipping a new JAR dependency. Since iHarder is only a
 	single, well-designed class with a wide-open license, I felt it was easier 
 	(and more convenient) to simply add it to the library as-is to the benefit 
